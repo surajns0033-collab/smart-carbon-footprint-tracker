@@ -157,7 +157,7 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in text-gray-900 dark:text-gray-100">
-      <div className="flex items-center gap-3 mb-6 bg-white/80 dark:bg-gray-900/80 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm backdrop-blur-md">
+      <div className="flex items-center gap-3 mb-6 bg-white/90 dark:bg-gray-900/90 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm backdrop-blur-md">
         <div className="p-3 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl">
           <Settings size={24} />
         </div>
@@ -167,7 +167,7 @@ export const Profile: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 border-b border-gray-200 dark:border-gray-805 scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto pb-2 border-b border-gray-200 dark:border-gray-800 scrollbar-hide">
         {['profile', 'privacy', 'notifications', 'about us'].map(tab => (
           <button 
             key={tab}
@@ -175,7 +175,7 @@ export const Profile: React.FC = () => {
             className={`px-4 py-2 font-semibold capitalize whitespace-nowrap transition-colors cursor-pointer text-sm ${
               activeTab === tab 
                 ? 'text-eco-600 dark:text-teal-400 border-b-2 border-eco-600 dark:border-teal-400' 
-                : 'text-gray-555 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-850 dark:hover:text-gray-200'
             }`}
           >
             {tabLabels[tab]?.[lang] || tab}
@@ -184,69 +184,69 @@ export const Profile: React.FC = () => {
       </div>
 
       {activeTab === 'profile' && (
-        <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }} className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-6 backdrop-blur-md">
+        <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }} className="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-6 backdrop-blur-md">
           <h2 className="text-lg font-bold flex items-center gap-2 text-gray-850 dark:text-gray-100"><User className="text-eco-500"/> Edit Profile</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-              <input type="text" className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.userName || ''} onChange={e => setFormData({...formData, userName: e.target.value})} />
+              <label className="block text-sm font-medium text-gray-750 dark:text-gray-300 mb-1">Name</label>
+              <input type="text" className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.userName || ''} onChange={e => setFormData({...formData, userName: e.target.value})} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Language</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.language} onChange={e => setFormData({...formData, language: e.target.value})}>
+              <label className="block text-sm font-medium text-gray-750 dark:text-gray-300 mb-1">Language</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.language} onChange={e => setFormData({...formData, language: e.target.value})}>
                 {LANGUAGES.map(l => <option key={l} value={l} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{l}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Goal</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-755 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.goal} onChange={e => setFormData({...formData, goal: e.target.value})}>
+              <label className="block text-sm font-medium text-gray-750 dark:text-gray-300 mb-1">Goal</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.goal} onChange={e => setFormData({...formData, goal: e.target.value})}>
                 {GOALS.map(g => <option key={g} value={g} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{g}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.country} onChange={e => { setFormData({...formData, country: e.target.value, state: '', city: ''}); }}>
+              <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">Country</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.country} onChange={e => { setFormData({...formData, country: e.target.value, state: '', city: ''}); }}>
                 {COUNTRIES.map(c => <option key={c} value={c} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">State</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.state} onChange={e => { setFormData({...formData, state: e.target.value, city: ''}); }}>
+              <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">State</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.state} onChange={e => { setFormData({...formData, state: e.target.value, city: ''}); }}>
                 <option value="" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Select State</option>
                 {availableStates.map(s => <option key={s} value={s} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">City</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-755 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})}>
+              <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">City</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})}>
                 <option value="" className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">Select City</option>
                 {availableCities.map(c => <option key={c} value={c} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{c}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Age Group</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-755 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.ageGroup} onChange={e => setFormData({...formData, ageGroup: e.target.value})}>
+              <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">Age Group</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.ageGroup} onChange={e => setFormData({...formData, ageGroup: e.target.value})}>
                 {AGE_GROUPS.map(a => <option key={a} value={a} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{a}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tracker Mode</label>
-              <select className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.trackerMode} onChange={e => setFormData({...formData, trackerMode: e.target.value})}>
+              <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">Tracker Mode</label>
+              <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.trackerMode} onChange={e => setFormData({...formData, trackerMode: e.target.value})}>
                 {TRACKER_MODES.map(m => <option key={m} value={m} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{m}</option>)}
               </select>
             </div>
             {formData.trackerMode === '🤖 AI Automatic Tracker' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">AI Category</label>
-                  <select className="w-full p-3 border border-gray-300 dark:border-gray-750 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.aiCategory} onChange={e => setFormData({...formData, aiCategory: e.target.value})}>
+                  <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">AI Category</label>
+                  <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.aiCategory} onChange={e => setFormData({...formData, aiCategory: e.target.value})}>
                     {AI_CATEGORIES.map(c => <option key={c} value={c} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">AI Level</label>
-                  <select className="w-full p-3 border border-gray-300 dark:border-gray-755 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.aiLevel} onChange={e => setFormData({...formData, aiLevel: e.target.value})}>
+                  <label className="block text-sm font-medium text-gray-755 dark:text-gray-300 mb-1">AI Level</label>
+                  <select className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.aiLevel} onChange={e => setFormData({...formData, aiLevel: e.target.value})}>
                     {AI_LEVELS.map(l => <option key={l} value={l} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">{l}</option>)}
                   </select>
                 </div>
@@ -260,16 +260,16 @@ export const Profile: React.FC = () => {
       )}
 
       {activeTab === 'privacy' && (
-        <div className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-4 backdrop-blur-md">
-          <h2 className="text-lg font-bold flex items-center gap-2 text-gray-850 dark:text-gray-100"><Shield className="text-gray-700 dark:text-gray-300"/> Privacy & Data Controls</h2>
+        <div className="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-4 backdrop-blur-md">
+          <h2 className="text-lg font-bold flex items-center gap-2 text-gray-855 dark:text-gray-100"><Shield className="text-gray-700 dark:text-gray-350"/> Privacy & Data Controls</h2>
           <div className="space-y-3 text-sm">
             <label className="flex items-center gap-3 p-3 border dark:border-gray-800 rounded-xl cursor-pointer hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
               <input type="checkbox" className="w-5 h-5 text-eco-600" checked={privacySettings.anonymous} onChange={e => setPrivacySettings({...privacySettings, anonymous: e.target.checked})} /> 
-              <span>Anonymous Mode (Hide name on leaderboards)</span>
+              <span className="text-gray-700 dark:text-gray-300">Anonymous Mode (Hide name on leaderboards)</span>
             </label>
             <label className="flex items-center gap-3 p-3 border dark:border-gray-800 rounded-xl cursor-pointer hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
               <input type="checkbox" className="w-5 h-5 text-eco-600" checked={privacySettings.privateProfile} onChange={e => setPrivacySettings({...privacySettings, privateProfile: e.target.checked})} /> 
-              <span>Private Profile (Only you can see your stats)</span>
+              <span className="text-gray-700 dark:text-gray-350">Private Profile (Only you can see your stats)</span>
             </label>
             
             <div className="pt-4 border-t border-gray-150 dark:border-gray-800 space-y-3">
@@ -294,12 +294,12 @@ export const Profile: React.FC = () => {
       )}
 
       {activeTab === 'notifications' && (
-        <div className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-4 backdrop-blur-md">
-          <h2 className="text-lg font-bold flex items-center gap-2 text-gray-850 dark:text-gray-100"><Bell className="text-yellow-500"/> Smart Notifications</h2>
+        <div className="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-4 backdrop-blur-md">
+          <h2 className="text-lg font-bold flex items-center gap-2 text-gray-855 dark:text-gray-100"><Bell className="text-yellow-500"/> Smart Notifications</h2>
           <div className="space-y-3 text-sm">
             {Object.entries(notifSettings).map(([key, value]) => (
               <label key={key} className="flex items-center justify-between p-3 border dark:border-gray-800 rounded-xl cursor-pointer hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
-                <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()} Notifications</span>
+                <span className="capitalize text-gray-700 dark:text-gray-300">{key.replace(/([A-Z])/g, ' $1').trim()} Notifications</span>
                 <input type="checkbox" className="w-5 h-5 text-eco-600" checked={value} onChange={e => setNotifSettings({...notifSettings, [key]: e.target.checked})} />
               </label>
             ))}
