@@ -21,13 +21,32 @@ describe('Translation Service Dictionary', () => {
   });
 
   it('has consistent keys across all languages', () => {
-    const englishKeys = Object.keys(translations.English);
     const languages = Object.keys(translations);
-
     languages.forEach(lang => {
-      // Allow minor differences, but verify key count is high
       const keys = Object.keys(translations[lang]);
       expect(keys.length).toBeGreaterThan(30);
+    });
+  });
+});
+
+describe('Dynamic Language Key Integrities', () => {
+  const languages = ['Hindi', 'Marathi', 'Spanish', 'French'] as const;
+  const keysToVerify = [
+    'dashboard', 'tracker', 'gov', 'simulator', 'library', 'leaderboard',
+    'learn', 'ai', 'profile', 'logout', 'welcome', 'impact_today',
+    'carbon_score', 'health_score', 'co2_saved', 'green_xp', 'money_saved',
+    'electricity_saved', 'water_saved', 'waste_recycled', 'city', 'state',
+    'country', 'global'
+  ];
+
+  languages.forEach(lang => {
+    keysToVerify.forEach(key => {
+      it(`verifies ${lang} translation is present for key: "${key}"`, () => {
+        const value = translations[lang][key];
+        expect(value).toBeDefined();
+        expect(typeof value).toBe('string');
+        expect(value.length).toBeGreaterThan(0);
+      });
     });
   });
 });

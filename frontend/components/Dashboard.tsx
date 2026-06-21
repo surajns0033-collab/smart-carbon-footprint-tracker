@@ -1,364 +1,497 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getLevelName } from '../constants';
 import {
-  Leaf, Zap, Droplets, TrendingDown, Activity, CheckCircle2, Circle,
+  Leaf, Zap, Droplets, TrendingDown, Activity, CheckCircle2,
   Globe2, DollarSign, Recycle, Settings2, ChevronLeft, ChevronRight,
-  Flame, Trophy, Wind, TreePine, Bolt, ArrowUp, ArrowDown, Target
+  Flame, Trophy, Wind, TreePine, Bolt, ArrowUp, ArrowDown, Target,
+  Calendar, Bell, Sun, Moon, Info, Car, Lightbulb, Fuel, UtensilsCrossed,
+  Trash2, Smile, ArrowRight, UserCheck, HelpCircle, Compass
 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, AreaChart, Area, RadialBarChart, RadialBar
+  ResponsiveContainer, AreaChart, Area, RadialBarChart, RadialBar,
+  PieChart, Pie, Cell
 } from 'recharts';
-import { Tutorial } from './Tutorial';
-import { DailyMotivation } from './DailyMotivation';
 import { useTranslation } from '../services/translation';
 
-const mockChartData = [
-  { name: 'Mon', co2: 12, saved: 4 },
-  { name: 'Tue', co2: 10, saved: 6 },
-  { name: 'Wed', co2: 15, saved: 2 },
-  { name: 'Thu', co2: 8,  saved: 9 },
-  { name: 'Fri', co2: 9,  saved: 7 },
-  { name: 'Sat', co2: 5,  saved: 11 },
-  { name: 'Sun', co2: 7,  saved: 8 },
-];
-
-const slides = [
-  [
-    { key: 'carbon',      icon: Leaf,       label: 'carbon_score',      color: 'from-emerald-400 to-green-600',   bg: 'bg-emerald-500/10 dark:bg-emerald-500/20', iconColor: 'text-emerald-500', progressColor: '#22c55e', progress: 65 },
-    { key: 'health',      icon: Activity,   label: 'health_score',      color: 'from-blue-400 to-blue-600',       bg: 'bg-blue-500/10 dark:bg-blue-500/20',       iconColor: 'text-blue-500',    progressColor: '#3b82f6', progress: 50 },
-    { key: 'co2saved',    icon: TrendingDown,label: 'co2_saved',        color: 'from-green-400 to-teal-600',      bg: 'bg-teal-500/10 dark:bg-teal-500/20',       iconColor: 'text-teal-500',    progressColor: '#14b8a6', progress: 42 },
-    { key: 'xp',          icon: Zap,        label: 'green_xp',          color: 'from-yellow-400 to-orange-500',   bg: 'bg-yellow-500/10 dark:bg-yellow-500/20',   iconColor: 'text-yellow-500',  progressColor: '#f59e0b', progress: 78 },
-  ],
-  [
-    { key: 'money',       icon: DollarSign, label: 'money_saved',       color: 'from-lime-400 to-emerald-600',    bg: 'bg-lime-500/10 dark:bg-lime-500/20',       iconColor: 'text-lime-500',    progressColor: '#84cc16', progress: 33 },
-    { key: 'electricity', icon: Bolt,       label: 'electricity_saved', color: 'from-purple-400 to-violet-600',   bg: 'bg-purple-500/10 dark:bg-purple-500/20',   iconColor: 'text-purple-500',  progressColor: '#a855f7', progress: 55 },
-    { key: 'water',       icon: Droplets,   label: 'water_saved',       color: 'from-cyan-400 to-blue-600',       bg: 'bg-cyan-500/10 dark:bg-cyan-500/20',       iconColor: 'text-cyan-500',    progressColor: '#06b6d4', progress: 60 },
-    { key: 'waste',       icon: Recycle,    label: 'waste_recycled',    color: 'from-orange-400 to-red-500',      bg: 'bg-orange-500/10 dark:bg-orange-500/20',   iconColor: 'text-orange-500',  progressColor: '#f97316', progress: 78 },
-  ],
-];
+const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#6366F1'];
 
 export const Dashboard: React.FC = () => {
-  const { profile, updateProfile, stats, missions, completeMission, isLoadingMissions, viewMode } = useAppContext();
+  const { profile, updateProfile, stats, addLog } = useAppContext();
   const { t } = useTranslation();
-  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [timeframe, setTimeframe] = useState('7 Days');
 
-  const isMobile = viewMode === 'mobile';
+  // Emission Breakdown data
+  const pieData = [
+    { name: 'Transport', value: 45 },
+    { name: 'Home Energy', value: 25 },
+    { name: 'Food', value: 15 },
+    { name: 'Waste', value: 10 },
+    { name: 'Others', value: 5 }
+  ];
 
-  const getStatValue = (key: string): string => {
-    switch (key) {
-      case 'carbon':      return `${stats.carbonScore} kg`;
-      case 'health':      return `${stats.healthyLivingScore}/100`;
-      case 'co2saved':    return `${stats.co2SavedKg.toFixed(1)} kg`;
-      case 'xp':          return `${stats.greenXP} XP`;
-      case 'money':       return `$${stats.moneySaved.toFixed(2)}`;
-      case 'electricity': return `${stats.electricitySaved.toFixed(1)} kWh`;
-      case 'water':       return `${stats.waterSaved.toFixed(1)} L`;
-      case 'waste':       return `${stats.wasteRecycled.toFixed(1)} kg`;
-      default:            return '0';
-    }
+  // Trend Overview data
+  const trendData = [
+    { day: 'May 14', co2: 4.8 },
+    { day: 'May 15', co2: 4.2 },
+    { day: 'May 16', co2: 5.1 },
+    { day: 'May 17', co2: 4.5 },
+    { day: 'May 18', co2: 4.0 },
+    { day: 'May 19', co2: 3.6 },
+    { day: 'May 20', co2: 4.1 }
+  ];
+
+  const handleQuickLog = (activityName: string, category: string, impact: number, xp: number) => {
+    addLog({
+      category,
+      description: `Logged activity: ${activityName}`,
+      co2Impact: impact,
+      xpEarned: xp
+    });
   };
-
-  const getSubtitle = (key: string): string => {
-    switch (key) {
-      case 'carbon':      return 'Daily Target: 500 kg';
-      case 'health':      return 'Status: Excellent';
-      case 'co2saved':    return '+14.2% this week';
-      case 'xp':          return `Level ${stats.level} Active`;
-      case 'money':       return 'Lifetime Savings';
-      case 'electricity': return 'Equivalent Clean Energy';
-      case 'water':       return 'Household Conserved';
-      case 'waste':       return 'Recycling Ratio: 78%';
-      default:            return '';
-    }
-  };
-
-  const handleModeToggle = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateProfile({ trackerMode: e.target.value });
-  };
-
-  const currentCards = slides[currentSlide];
 
   return (
-    <div className="flex flex-col gap-4 animate-fade-in text-gray-900 dark:text-gray-100 h-full">
-      {!profile?.hasSeenTutorial && <Tutorial />}
+    <div className="space-y-6 animate-fade-in text-gray-900 dark:text-gray-100">
+      
+      {/* ── Top Header Section ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            Good Morning, {profile?.userName || 'Arjun'}! 🌿
+          </h1>
+          <p className="text-gray-500 text-sm">Every small step counts towards a big change.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 shadow-sm">
+            <Calendar size={16} />
+            <span>May 20, 2025</span>
+          </div>
+          <button className="p-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 text-gray-500 hover:text-gray-700 dark:text-gray-400 cursor-pointer shadow-sm relative">
+            <Bell size={18} />
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+          </button>
+        </div>
+      </div>
 
-      {/* ── Hero Header Banner ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-800 p-5 shadow-xl">
-        {/* decorative circles */}
-        <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10 blur-sm" />
-        <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-white/10 blur-sm" />
-        <div className="absolute top-4 right-20 w-16 h-16 rounded-full bg-white/10" />
+      {/* ── First Row: Metric Cards ── */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* Sustainability Score */}
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Sustainability Score</p>
+              <h3 className="text-2xl font-black mt-1">712 <span className="text-xs text-gray-400 font-normal">/1000</span></h3>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-black text-sm flex items-center justify-center">
+              A
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mt-3 text-xs text-emerald-600 font-bold">
+            <ArrowUp size={12} />
+            <span>Great Going!</span>
+          </div>
+        </div>
 
-        <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+        {/* Today's Footprint */}
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Today's Footprint</p>
+              <h3 className="text-2xl font-black mt-1">3.45 <span className="text-xs text-gray-400 font-normal">kg CO₂</span></h3>
+            </div>
+            <div className="p-1.5 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 rounded-lg">
+              <Leaf size={16} />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 mt-3 text-xs text-emerald-600 font-bold">
+            <ArrowDown size={12} />
+            <span>8% vs yesterday</span>
+          </div>
+        </div>
+
+        {/* This Week */}
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">This Week</p>
+              <h3 className="text-2xl font-black mt-1">24.12 <span className="text-xs text-gray-400 font-normal">kg CO₂</span></h3>
+            </div>
+            <div className="p-1.5 bg-blue-50 dark:bg-blue-950/20 text-blue-500 rounded-lg">
+              <Activity size={16} />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 mt-3 text-xs text-emerald-600 font-bold">
+            <ArrowDown size={12} />
+            <span>12% vs last week</span>
+          </div>
+        </div>
+
+        {/* This Month */}
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">This Month</p>
+              <h3 className="text-2xl font-black mt-1">98.34 <span className="text-xs text-gray-400 font-normal">kg CO₂</span></h3>
+            </div>
+            <div className="p-1.5 bg-purple-50 dark:bg-purple-950/20 text-purple-500 rounded-lg">
+              <Calendar size={16} />
+            </div>
+          </div>
+          <div className="flex items-center gap-1 mt-3 text-xs text-emerald-600 font-bold">
+            <ArrowDown size={12} />
+            <span>15% vs last month</span>
+          </div>
+        </div>
+
+        {/* CO2 Reduced */}
+        <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between relative group hover:shadow-md transition-shadow">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-[10px] uppercase font-bold tracking-wider text-gray-400">CO₂ Reduced</p>
+              <h3 className="text-2xl font-black mt-1">245.6 <span className="text-xs text-gray-400 font-normal">kg CO₂</span></h3>
+            </div>
+            <div className="p-1.5 bg-teal-50 dark:bg-teal-950/20 text-teal-500 rounded-lg">
+              <TreePine size={16} />
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 mt-3 text-xs text-emerald-600 font-bold">
+            <span>Total Contribution</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Second Row: Charts & AI Coach ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Emission Breakdown */}
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-2xl">🌿</span>
-              <h1 className="text-xl md:text-2xl font-black text-white drop-shadow">
-                {t('welcome')}, {profile?.userName}!
-              </h1>
-            </div>
-            <p className="text-emerald-100 text-sm">{t('impact_today')} <span className="font-semibold text-white">{profile?.country}</span></p>
-            {/* Streak badge */}
-            <div className="flex items-center gap-3 mt-3 flex-wrap">
-              <span className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-                <Flame size={12} className="text-orange-300" /> {stats.streakDays} Day Streak
-              </span>
-              <span className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-                <Trophy size={12} className="text-yellow-300" /> {getLevelName(stats.level)}
-              </span>
-              <span className="inline-flex items-center gap-1 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-                <TreePine size={12} className="text-green-300" /> {stats.treesEquivalent ?? 0} Trees Saved
-              </span>
-            </div>
-          </div>
-
-          {/* Mode selector */}
-          <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-2 rounded-xl border border-white/30 min-w-[180px]">
-            <Settings2 size={16} className="text-white shrink-0" />
-            <select
-              className="bg-transparent font-bold text-white outline-none w-full cursor-pointer text-sm"
-              value={profile?.trackerMode}
-              onChange={handleModeToggle}
-            >
-              <option value="🤖 AI Automatic Tracker" className="bg-gray-800 text-white">{t('ai_automatic')}</option>
-              <option value="✍️ Manual Tracker"        className="bg-gray-800 text-white">{t('manual')}</option>
-            </select>
-          </div>
-        </div>
-
-        {/* XP Progress bar */}
-        <div className="relative mt-4">
-          <div className="flex justify-between text-xs text-white/80 mb-1">
-            <span>XP Progress to Level {stats.level + 1}</span>
-            <span>{stats.greenXP} / {(stats.level) * 500} XP</span>
-          </div>
-          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full transition-all duration-700"
-              style={{ width: `${Math.min(100, (stats.greenXP / ((stats.level) * 500)) * 100)}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* ── Daily Motivation (compact) ── */}
-      <DailyMotivation />
-
-      {/* ── Scorecard Carousel ── */}
-      <div className="relative px-6">
-        <div className={`grid gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-4'}`}>
-          {currentCards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <div
-                key={card.key}
-                className={`relative overflow-hidden rounded-2xl border border-white/20 dark:border-gray-700/60 p-4 flex flex-col gap-3 shadow-lg backdrop-blur-md bg-white/80 dark:bg-gray-900/80 hover:scale-[1.02] hover:shadow-xl transition-all duration-300 group`}
-              >
-                {/* gradient accent strip */}
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.color} rounded-t-2xl`} />
-
-                <div className="flex items-center justify-between">
-                  <div className={`p-2.5 rounded-xl ${card.bg}`}>
-                    <Icon size={20} className={card.iconColor} />
-                  </div>
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">
-                    <ArrowUp size={9} /> +{card.progress}%
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-0.5">{t(card.label)}</p>
-                  <h3 className="text-xl font-black text-gray-900 dark:text-gray-100">{getStatValue(card.key)}</h3>
-                  <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{getSubtitle(card.key)}</p>
-                </div>
-
-                {/* mini progress bar */}
-                <div className="h-1.5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${card.color} rounded-full transition-all duration-1000`}
-                    style={{ width: `${card.progress}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Prev / Next arrows */}
-        <button
-          onClick={() => setCurrentSlide(p => p === 0 ? 1 : 0)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg p-2 rounded-full hover:scale-110 transition-all cursor-pointer z-10"
-        >
-          <ChevronLeft size={18} />
-        </button>
-        <button
-          onClick={() => setCurrentSlide(p => p === 0 ? 1 : 0)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg p-2 rounded-full hover:scale-110 transition-all cursor-pointer z-10"
-        >
-          <ChevronRight size={18} />
-        </button>
-
-        {/* Dot indicators */}
-        <div className="flex justify-center gap-1.5 mt-3">
-          {[0, 1].map(i => (
-            <button
-              key={i}
-              onClick={() => setCurrentSlide(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${currentSlide === i ? 'w-6 bg-emerald-500' : 'w-2 bg-gray-300 dark:bg-gray-700'}`}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ── Main Content Grid ── */}
-      <div className={`grid gap-4 flex-1 ${isMobile ? 'grid-cols-1' : 'grid-cols-3'}`}>
-
-        {/* ── CO2 Chart (spans 2 cols on desktop) ── */}
-        <div className={`${isMobile ? '' : 'col-span-2'} bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex flex-col gap-3`}>
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100">
-              <TrendingDown className="text-emerald-500" size={18} /> {t('co2_control')}
-            </h2>
-            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-              <span className="flex items-center gap-1"><span className="w-3 h-1 bg-emerald-500 rounded-full inline-block" /> Emitted</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-1 bg-blue-400 rounded-full inline-block" /> Saved</span>
-            </div>
-          </div>
-          <div className="flex-1 min-h-[180px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={mockChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="co2Grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#22c55e" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="savedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#60a5fa" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#60a5fa" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb44" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 11 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9ca3af', fontSize: 11 }} />
-                <Tooltip
-                  contentStyle={{ borderRadius: '12px', border: 'none', backgroundColor: '#111827', color: '#fff', fontSize: 12 }}
-                  cursor={{ stroke: '#22c55e44', strokeWidth: 2 }}
-                />
-                <Area type="monotone" dataKey="co2"   stroke="#22c55e" strokeWidth={2.5} fill="url(#co2Grad)"   dot={false} activeDot={{ r: 5 }} />
-                <Area type="monotone" dataKey="saved" stroke="#60a5fa" strokeWidth={2.5} fill="url(#savedGrad)" dot={false} activeDot={{ r: 5 }} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* ── Daily Missions / Right Column ── */}
-        <div className="flex flex-col gap-4">
-          {profile?.trackerMode === '🤖 AI Automatic Tracker' ? (
-            <div className="flex-1 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex flex-col">
-              <h2 className="text-base font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100 mb-3">
-                🤖 {t('daily_missions')}
-              </h2>
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-                {isLoadingMissions ? (
-                  <div className="flex justify-center items-center h-full">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
-                  </div>
-                ) : missions.length > 0 ? (
-                  missions.map(mission => (
-                    <div key={mission.id} className={`p-3 rounded-xl border transition-all ${mission.completed ? 'opacity-50 bg-gray-50 dark:bg-gray-800/30 border-gray-200 dark:border-gray-700' : 'bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 hover:border-emerald-400'}`}>
-                      <div className="flex justify-between items-start">
-                        <h3 className={`font-semibold text-sm ${mission.completed ? 'line-through text-gray-400' : 'text-gray-800 dark:text-gray-100'}`}>{mission.title}</h3>
-                        <button onClick={() => completeMission(mission.id)} disabled={mission.completed} className="text-emerald-500 hover:text-emerald-700 disabled:text-gray-300 transition-colors cursor-pointer ml-2 shrink-0">
-                          {mission.completed ? <CheckCircle2 size={18} /> : <Circle size={18} />}
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">{mission.description}</p>
-                      <div className="flex gap-2 text-[10px] font-bold">
-                        <span className="bg-green-100 dark:bg-emerald-950 text-green-700 dark:text-emerald-300 px-2 py-0.5 rounded-md">-{mission.expectedCo2Save}kg CO₂</span>
-                        <span className="bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 rounded-md">+{mission.xpReward} XP</span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-400 text-center mt-6">{t('no_missions')}</p>
-                )}
+            <h3 className="font-bold text-gray-800 dark:text-gray-100 mb-4">Emission Breakdown</h3>
+            <div className="flex justify-center relative my-4">
+              <ResponsiveContainer width="100%" height={160}>
+                <PieChart>
+                  <Pie data={pieData} innerRadius={50} outerRadius={70} paddingAngle={3} dataKey="value">
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                <p className="text-lg font-black text-gray-800 dark:text-white">3.45</p>
+                <p className="text-[10px] text-gray-400">kg CO₂</p>
               </div>
             </div>
-          ) : (
-            <div className="flex-1 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5 flex flex-col justify-center items-center text-center gap-3">
-              <div className="w-14 h-14 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                <Zap size={28} className="text-yellow-400" />
-              </div>
+            <div className="grid grid-cols-2 gap-2 text-xs mt-4">
+              {pieData.map((item, idx) => (
+                <div key={item.name} className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[idx] }} />
+                  <span className="text-gray-600 dark:text-gray-400">{item.name} ({item.value}%)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button className="text-xs font-bold text-emerald-600 dark:text-teal-400 flex items-center gap-1 hover:underline mt-6 cursor-pointer">
+            View Detailed Analytics <ArrowRight size={12} />
+          </button>
+        </div>
+
+        {/* Trend Overview */}
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-4">
               <div>
-                <h3 className="font-bold text-gray-800 dark:text-gray-100">{t('manual_mode_active')}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('go_to_tracker_tip')}</p>
+                <h3 className="font-bold text-gray-800 dark:text-gray-100">Trend Overview</h3>
+                <p className="text-xs text-gray-400">Your carbon footprint trend</p>
               </div>
-              <button
-                onClick={() => { window.dispatchEvent(new CustomEvent('navigate-tracker')); }}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-6 rounded-xl cursor-pointer text-sm transition-colors shadow-md"
+              <select 
+                value={timeframe} 
+                onChange={e => setTimeframe(e.target.value)}
+                className="text-xs font-bold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1.5 rounded-lg outline-none cursor-pointer"
               >
-                {t('go_to_tracker')}
+                <option>7 Days</option>
+                <option>30 Days</option>
+              </select>
+            </div>
+            <div className="h-[180px] w-full mt-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={trendData} margin={{ left: -25, right: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+                  <YAxis domain={[0, 6]} axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+                  <Tooltip contentStyle={{ fontSize: 10, borderRadius: 8 }} />
+                  <Line type="monotone" dataKey="co2" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Sustainability Coach */}
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                AI Sustainability Coach
+              </h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-teal-400 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-1 rounded-full">
+                ● Online
+              </span>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-850 p-4 rounded-xl border border-gray-100 dark:border-gray-800/50 flex gap-3 items-start my-3">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+                🤖
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="font-bold mb-1">Hi Arjun! 👋</p>
+                You used more transport than usual this week. Try using public transport or cycling for short distances.
+              </div>
+            </div>
+
+            <div className="bg-emerald-50/50 dark:bg-emerald-950/10 p-3 rounded-xl border border-emerald-100/50 dark:border-emerald-900/30 flex gap-3 items-center">
+              <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                💡
+              </div>
+              <div className="text-xs">
+                <p className="font-bold text-emerald-800 dark:text-emerald-400">Today's Suggestion</p>
+                <p className="text-gray-550 dark:text-gray-400">Switch off AC 1 hour earlier today</p>
+              </div>
+            </div>
+          </div>
+          
+          <button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs mt-6 transition-colors cursor-pointer">
+            Chat with Coach
+          </button>
+        </div>
+      </div>
+
+      {/* ── Third Row: Quick Actions & Log Progress ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        {/* Left Side: Logging & Progress */}
+        <div className="md:col-span-2 space-y-6">
+          {/* Quick Log */}
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-850 dark:text-gray-100">Quick Log Your Activity</h3>
+              <button className="text-xs font-bold text-gray-500 hover:text-gray-700 dark:text-gray-400 border border-gray-250 dark:border-gray-700 px-3 py-1.5 rounded-xl flex items-center gap-1 bg-white dark:bg-gray-950 cursor-pointer shadow-sm">
+                ⚙️ Custom Activity
               </button>
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* ── Bottom Row: Climate Contribution + Health Assistant ── */}
-      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
-
-        {/* Climate Contribution */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-5">
-          <h2 className="text-base font-bold mb-4 flex items-center gap-2 text-gray-800 dark:text-gray-100">
-            <Globe2 className="text-blue-500" size={18} /> {t('climate_contribution')}
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: `🏙️ ${profile?.city !== 'Not Specified' ? profile?.city : 'City'}`, value: `${stats.cityContribution.toFixed(4)}%`, color: 'from-blue-400 to-blue-600' },
-              { label: `🗺️ ${profile?.state !== 'Not Specified' ? profile?.state : 'State'}`, value: `${stats.stateContribution.toFixed(4)}%`, color: 'from-purple-400 to-purple-600' },
-              { label: `🌏 ${profile?.country}`, value: `${stats.countryContribution.toFixed(5)}%`, color: 'from-emerald-400 to-teal-600' },
-              { label: '🌍 Global', value: `${stats.globalContribution.toFixed(6)}%`, color: 'from-orange-400 to-red-500' },
-            ].map(item => (
-              <div key={item.label} className="relative overflow-hidden p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 text-center">
-                <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${item.color}`} />
-                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-1">{item.label}</p>
-                <p className="text-lg font-black text-gray-800 dark:text-gray-100">{item.value}</p>
-              </div>
-            ))}
+            
+            <div className="grid grid-cols-4 md:grid-cols-7 gap-3">
+              {[
+                { name: 'Transport', icon: Car, color: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20', impact: -2.5, xp: 20 },
+                { name: 'Electricity', icon: Lightbulb, color: 'text-blue-500 bg-blue-50 dark:bg-blue-950/20', impact: -1.2, xp: 15 },
+                { name: 'Fuel', icon: Fuel, color: 'text-orange-500 bg-orange-50 dark:bg-orange-950/20', impact: -3.0, xp: 30 },
+                { name: 'Food', icon: UtensilsCrossed, color: 'text-amber-500 bg-amber-50 dark:bg-amber-950/20', impact: -1.8, xp: 20 },
+                { name: 'Waste', icon: Trash2, color: 'text-purple-500 bg-purple-50 dark:bg-purple-950/20', impact: -0.5, xp: 10 },
+                { name: 'Water', icon: Droplets, color: 'text-cyan-500 bg-cyan-50 dark:bg-cyan-950/20', impact: -1.0, xp: 15 },
+                { name: 'Lifestyle', icon: Leaf, color: 'text-teal-500 bg-teal-50 dark:bg-teal-950/20', impact: -2.0, xp: 25 },
+              ].map(action => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.name}
+                    onClick={() => handleQuickLog(action.name, action.name, action.impact, action.xp)}
+                    className="flex flex-col items-center gap-2 p-3 bg-white dark:bg-gray-950 hover:bg-gray-50 dark:hover:bg-gray-900 border border-gray-150 dark:border-gray-800 rounded-xl transition-all cursor-pointer shadow-sm group"
+                  >
+                    <div className={`p-2.5 rounded-xl ${action.color} group-hover:scale-110 transition-transform`}>
+                      <Icon size={18} />
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-550 dark:text-gray-400">{action.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Healthy Living Assistant */}
-        <div className="bg-gradient-to-br from-blue-50/90 to-cyan-50/90 dark:from-blue-950/40 dark:to-cyan-950/40 backdrop-blur-md rounded-2xl border border-blue-100 dark:border-blue-900/50 shadow-sm p-5">
-          <h2 className="text-base font-bold text-blue-900 dark:text-blue-100 mb-1 flex items-center gap-2">
-            <Activity size={18} /> {t('living_assistant')}
-          </h2>
-          <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
-            Status: <span className="font-bold text-emerald-600 dark:text-emerald-400">🌱 Excellent</span>
-          </p>
-          <div className="space-y-2">
-            {[
-              { label: '🚶 Walking',    rating: 5, color: 'bg-emerald-500' },
-              { label: '🚴 Cycling',   rating: 4, color: 'bg-blue-500' },
-              { label: '🚗 Petrol Car',rating: 2, color: 'bg-red-400' },
-              { label: '♻️ Recycling', rating: 4, color: 'bg-teal-500' },
-            ].map(item => (
-              <div key={item.label} className="flex items-center gap-3 bg-white/80 dark:bg-gray-800/70 p-2.5 rounded-xl">
-                <span className="text-sm text-gray-700 dark:text-gray-200 w-28 shrink-0">{item.label}</span>
-                <div className="flex-1 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className={`h-full ${item.color} rounded-full`} style={{ width: `${(item.rating / 5) * 100}%` }} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Your Progress */}
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between text-center">
+              <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm mb-4">Your Progress</h3>
+              <div className="flex justify-center relative">
+                <ResponsiveContainer width="100%" height={120}>
+                  <RadialBarChart innerRadius="80%" outerRadius="100%" data={[{ value: 42 }]} startAngle={90} endAngle={-270}>
+                    <RadialBar background dataKey="value" fill="#10b981" />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <p className="text-2xl font-black text-gray-800 dark:text-white">42%</p>
+                  <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Towards Net Zero</p>
                 </div>
-                <span className="text-xs font-bold text-gray-500 dark:text-gray-400 w-5">{item.rating}/5</span>
               </div>
-            ))}
-          </div>
-          <div className="mt-3 p-3 bg-blue-100/70 dark:bg-blue-950/60 rounded-xl text-xs text-blue-800 dark:text-blue-200">
-            <strong>🤖 AI Guide:</strong> {t('guide_tip')}
+              <p className="text-xs text-gray-550 dark:text-gray-400 mt-4">Target: Dec 2030</p>
+            </div>
+
+            {/* Daily Challenge */}
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 className="font-bold text-gray-800 dark:text-gray-100 text-sm mb-2">Daily Challenge</h3>
+                <div className="my-4 flex items-center gap-3">
+                  <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
+                    <Target size={18} />
+                  </div>
+                  <div className="text-xs">
+                    <p className="font-bold">Use Public Transport</p>
+                    <p className="text-gray-500 mt-0.5">Use bus, metro or train for at least one trip today.</p>
+                  </div>
+                </div>
+              </div>
+              <button className="w-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-100/30 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                Completed ✓
+              </button>
+            </div>
+
+            {/* Achievements */}
+            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-bold text-gray-850 dark:text-gray-100 text-sm">Achievements</h3>
+                <button className="text-[10px] font-bold text-emerald-600 dark:text-teal-400 hover:underline cursor-pointer">View All</button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 my-2 text-center">
+                {[
+                  { name: '7-Day Streak', icon: '🔥' },
+                  { name: 'Green Commuter', icon: '🚗' },
+                  { name: 'Energy Saver', icon: '⚡' },
+                  { name: 'Waste Reducer', icon: '🗑️' },
+                  { name: 'Eco Explorer', icon: '🌍' },
+                  { name: 'Climate Champion', icon: '🏆' },
+                ].map(badge => (
+                  <div key={badge.name} className="flex flex-col items-center gap-1">
+                    <div className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 border border-gray-150 dark:border-gray-700 flex items-center justify-center text-lg">
+                      {badge.icon}
+                    </div>
+                    <span className="text-[8px] font-bold text-gray-500 leading-tight">{badge.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Right Side: Leaderboards & Community Impact */}
+        <div className="space-y-6">
+          {/* Top Carbon Reducers */}
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-gray-850 dark:text-gray-100 text-sm">Top Carbon Reducers – Mumbai</h3>
+              <button className="text-[10px] font-bold text-emerald-600 dark:text-teal-400 hover:underline cursor-pointer">View All</button>
+            </div>
+
+            <div className="space-y-3.5 my-4">
+              {[
+                { rank: '1', name: 'Neha Iyer', co2: '1,245 kg CO₂', me: false },
+                { rank: '2', name: 'Rohan Mehta', co2: '980 kg CO₂', me: false },
+                { rank: '3', name: 'Kavya Shah', co2: '870 kg CO₂', me: false },
+                { rank: '42', name: 'Arjun Sharma (You)', co2: '245.6 kg CO₂', me: true },
+              ].map(user => (
+                <div 
+                  key={user.name} 
+                  className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                    user.me 
+                      ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/50 dark:border-emerald-900/30' 
+                      : 'border-transparent'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-gray-400 w-5">{user.rank}</span>
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-850 flex items-center justify-center font-bold text-xs">
+                      {user.name.charAt(0)}
+                    </div>
+                    <span className="text-xs font-bold text-gray-700 dark:text-gray-305">{user.name}</span>
+                  </div>
+                  <span className="text-xs font-black text-gray-850 dark:text-gray-105">{user.co2}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-[10px] font-bold text-emerald-600 dark:text-teal-400 text-center bg-emerald-50/30 dark:bg-emerald-950/10 py-2 rounded-xl">
+              You are in Top 5% in Mumbai 👏
+            </p>
+          </div>
+
+          {/* Community Impact */}
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-150 dark:border-gray-800/80 shadow-sm flex flex-col justify-between">
+            <div>
+              <h3 className="font-bold text-gray-850 dark:text-gray-100 text-sm mb-4">Community Impact</h3>
+              <div className="space-y-2.5 text-xs text-gray-650 dark:text-gray-400 font-medium">
+                <div className="flex justify-between border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
+                  <span>Your Contribution</span>
+                  <span className="font-bold text-gray-850 dark:text-gray-200">245.6 kg CO₂</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
+                  <span>Mumbai Community</span>
+                  <span className="font-bold text-gray-850 dark:text-gray-200">25.4 Tons CO₂</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
+                  <span>Maharashtra</span>
+                  <span className="font-bold text-gray-850 dark:text-gray-200">180 Tons CO₂</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-100 dark:border-gray-800/60 pb-1.5">
+                  <span>India</span>
+                  <span className="font-bold text-gray-850 dark:text-gray-200">3,200 Tons CO₂</span>
+                </div>
+                <div className="flex justify-between pb-1">
+                  <span>Global</span>
+                  <span className="font-bold text-gray-850 dark:text-gray-200">125,000 Tons CO₂</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-center mt-6">
+              <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 dark:text-teal-400 flex items-center justify-center text-4xl animate-spin-slow">
+                🌎
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
+
+      {/* ── Fourth Row: Eco Companion Footer Banner ── */}
+      <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 dark:from-emerald-950/20 dark:via-teal-950/20 dark:to-emerald-900/10 p-6 rounded-3xl border border-emerald-100 dark:border-emerald-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-900 border border-emerald-200/50 dark:border-emerald-800/50 flex items-center justify-center text-3xl">
+            🌱
+          </div>
+          <div>
+            <h3 className="font-bold text-emerald-900 dark:text-teal-300">Eco Companion</h3>
+            <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">Level 4 — Sustainability Advocate</p>
+            <div className="w-48 bg-emerald-200/40 dark:bg-emerald-900/40 h-2 rounded-full mt-2.5 overflow-hidden">
+              <div className="bg-emerald-600 h-full rounded-full" style={{ width: '75%' }}></div>
+            </div>
+            <p className="text-[9px] font-bold text-emerald-600 dark:text-teal-400 mt-1">750 / 1000 XP (Growing)</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-6 text-center w-full md:w-auto">
+          <div className="bg-white/60 dark:bg-gray-900/40 px-5 py-3 rounded-2xl border border-emerald-100/30 dark:border-emerald-900/20 shadow-sm">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Trees Planted</p>
+            <p className="text-lg font-black text-emerald-700 dark:text-teal-400">12 Trees</p>
+          </div>
+          <div className="bg-white/60 dark:bg-gray-900/40 px-5 py-3 rounded-2xl border border-emerald-100/30 dark:border-emerald-900/20 shadow-sm">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Energy Saved</p>
+            <p className="text-lg font-black text-blue-600 dark:text-blue-400">980 kWh</p>
+          </div>
+          <div className="bg-white/60 dark:bg-gray-900/40 px-5 py-3 rounded-2xl border border-emerald-100/30 dark:border-emerald-900/20 shadow-sm">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Fuel Saved</p>
+            <p className="text-lg font-black text-amber-600 dark:text-amber-400">45 Liters</p>
+          </div>
+        </div>
+
+        <div className="bg-emerald-600/5 dark:bg-emerald-950/30 p-4 rounded-2xl border border-emerald-500/10 dark:border-emerald-900/20 text-center w-full md:w-64">
+          <p className="text-[10px] font-bold text-emerald-800 dark:text-teal-400 uppercase tracking-widest mb-1">Did you know?</p>
+          <p className="text-[11px] text-emerald-700 dark:text-emerald-400 leading-normal">
+            If everyone on Earth lived like you, we would need <span className="font-black text-emerald-900 dark:text-white">1.3 Earths</span>.
+          </p>
+        </div>
+
+      </div>
+
     </div>
   );
 };
