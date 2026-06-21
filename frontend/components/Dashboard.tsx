@@ -29,7 +29,7 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white/80 dark:bg-gray-900/80 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md">
         <div>
           <h1 className="text-2xl font-bold text-gray-850 dark:text-gray-100">{t('welcome')}, {profile?.userName}!</h1>
-          <p className="text-gray-500 dark:text-gray-400">{t('impact_today')} {profile?.country}.</p>
+          <p className="text-gray-550 dark:text-gray-400">{t('impact_today')} {profile?.country}.</p>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <div className="flex items-center gap-2 bg-gray-50/50 dark:bg-gray-800/50 p-2 rounded-xl border border-gray-200 dark:border-gray-700 flex-1 md:flex-none">
@@ -48,14 +48,14 @@ export const Dashboard: React.FC = () => {
 
       {/* Stats Grid - 2 rows of 4 cards */}
       <div className="grid grid-cols-4 gap-3 md:gap-4">
-        <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} color="bg-eco-50 dark:bg-emerald-950/40" />
-        <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} color="bg-blue-50 dark:bg-blue-950/40" />
-        <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} color="bg-green-50 dark:bg-green-950/40" />
-        <StatCard icon={<Zap className="text-yellow-500"/>} title={t('green_xp')} value={stats.greenXP.toString()} color="bg-yellow-50 dark:bg-yellow-950/40" />
-        <StatCard icon={<DollarSign className="text-emerald-500"/>} title={t('money_saved')} value={`$${stats.moneySaved.toFixed(2)}`} color="bg-emerald-50 dark:bg-emerald-950/40" />
-        <StatCard icon={<Zap className="text-purple-500"/>} title={t('electricity_saved')} value={`${stats.electricitySaved.toFixed(1)} kWh`} color="bg-purple-50 dark:bg-purple-950/40" />
-        <StatCard icon={<Droplets className="text-cyan-500"/>} title={t('water_saved')} value={`${stats.waterSaved.toFixed(1)} L`} color="bg-cyan-50 dark:bg-cyan-950/40" />
-        <StatCard icon={<Recycle className="text-orange-500"/>} title={t('waste_recycled')} value={`${stats.wasteRecycled.toFixed(1)} kg`} color="bg-orange-50 dark:bg-orange-950/40" />
+        <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} subtitle="Daily Target: 500kg" color="bg-eco-50 dark:bg-emerald-950/40" />
+        <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} subtitle="Status: Excellent" color="bg-blue-50 dark:bg-blue-950/40" />
+        <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} subtitle="+14.2% this week" color="bg-green-50 dark:bg-green-950/40" />
+        <StatCard icon={<Zap className="text-yellow-500"/>} title={t('green_xp')} value={stats.greenXP.toString()} subtitle={`Level ${stats.level} Active`} color="bg-yellow-50 dark:bg-yellow-950/40" />
+        <StatCard icon={<DollarSign className="text-emerald-500"/>} title={t('money_saved')} value={`$${stats.moneySaved.toFixed(2)}`} subtitle="Lifetime Savings" color="bg-emerald-50 dark:bg-emerald-950/40" />
+        <StatCard icon={<Zap className="text-purple-500"/>} title={t('electricity_saved')} value={`${stats.electricitySaved.toFixed(1)} kWh`} subtitle="Equivalent Clean Energy" color="bg-purple-50 dark:bg-purple-950/40" />
+        <StatCard icon={<Droplets className="text-cyan-500"/>} title={t('water_saved')} value={`${stats.waterSaved.toFixed(1)} L`} subtitle="Household Conserved" color="bg-cyan-50 dark:bg-cyan-950/40" />
+        <StatCard icon={<Recycle className="text-orange-500"/>} title={t('waste_recycled')} value={`${stats.wasteRecycled.toFixed(1)} kg`} subtitle="Recycling Ratio: 78%" color="bg-orange-50 dark:bg-orange-950/40" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -82,7 +82,7 @@ export const Dashboard: React.FC = () => {
 
           {/* My Climate Contribution */}
           <div className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800 dark:text-gray-100">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-850 dark:text-gray-100">
               <Globe2 className="text-blue-500"/> {t('climate_contribution')}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
@@ -124,7 +124,7 @@ export const Dashboard: React.FC = () => {
                   missions.map(mission => (
                     <div key={mission.id} className={`p-4 rounded-xl border transition-all ${mission.completed ? 'bg-gray-50/30 border-gray-200 opacity-75 dark:border-gray-750' : 'bg-white/70 dark:bg-gray-800/70 border-eco-200 dark:border-emerald-900 hover:border-eco-400 dark:hover:border-emerald-600 shadow-sm'}`}>
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className={`font-semibold text-sm ${mission.completed ? 'text-gray-500 line-through dark:text-gray-400' : 'text-gray-850 dark:text-gray-100'}`}>{mission.title}</h3>
+                        <h3 className={`font-semibold text-sm ${mission.completed ? 'text-gray-500 line-through dark:text-gray-400' : 'text-gray-855 dark:text-gray-100'}`}>{mission.title}</h3>
                         <button onClick={() => completeMission(mission.id)} disabled={mission.completed} className="text-eco-500 dark:text-teal-400 hover:text-eco-700 disabled:text-gray-300 transition-colors cursor-pointer">
                           {mission.completed ? <CheckCircle2 size={20} /> : <Circle size={20} />}
                         </button>
@@ -184,7 +184,7 @@ export const Dashboard: React.FC = () => {
   );
 };
 
-const StatCard = ({ icon, title, value, color }: any) => (
+const StatCard = ({ icon, title, value, subtitle, color }: any) => (
   <div className="bg-white/90 dark:bg-gray-900/90 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md flex flex-col items-center justify-center text-center gap-2 aspect-square transition-all duration-300 hover:scale-[1.03] hover:shadow-md">
     <div className={`p-3.5 rounded-full ${color} flex items-center justify-center`}>
       {React.cloneElement(icon, { size: 24 })}
@@ -192,6 +192,7 @@ const StatCard = ({ icon, title, value, color }: any) => (
     <div className="space-y-1">
       <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">{title}</p>
       <h3 className="text-xl font-black text-gray-850 dark:text-gray-100">{value}</h3>
+      {subtitle && <p className="text-[9px] text-gray-450 dark:text-gray-400 font-semibold tracking-wide">{subtitle}</p>}
     </div>
   </div>
 );
