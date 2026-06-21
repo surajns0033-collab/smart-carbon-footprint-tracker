@@ -129,11 +129,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div 
       className={`flex h-screen overflow-hidden transition-all duration-300 relative ${currentTheme.bg}`}
       style={inlineBgStyle}
+      role="application"
+      aria-label="Smart Carbon Footprint Tracker Application"
     >
       {/* Top Right Version Switcher */}
-      <div className="absolute top-4 right-4 z-50 flex bg-white/90 dark:bg-gray-900/90 p-1 rounded-xl border border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-lg gap-1">
+      <div role="toolbar" aria-label="View and theme controls" className="absolute top-4 right-4 z-50 flex bg-white/90 dark:bg-gray-900/90 p-1 rounded-xl border border-gray-200 dark:border-gray-800 backdrop-blur-md shadow-lg gap-1">
         <button 
           onClick={() => setViewMode('desktop')} 
+          aria-pressed={viewMode === 'desktop'}
+          aria-label="Switch to Desktop view"
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             viewMode === 'desktop' 
               ? 'bg-eco-600 text-white shadow-sm' 
@@ -141,11 +145,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           }`}
           title="Switch to Desktop Version"
         >
-          <Monitor size={14} />
+          <Monitor size={14} aria-hidden="true" />
           <span>Desktop</span>
         </button>
         <button 
           onClick={() => setViewMode('mobile')} 
+          aria-pressed={viewMode === 'mobile'}
+          aria-label="Switch to Mobile view"
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
             viewMode === 'mobile' 
               ? 'bg-eco-600 text-white shadow-sm' 
@@ -153,16 +159,18 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           }`}
           title="Switch to Mobile Version"
         >
-          <Smartphone size={14} />
+          <Smartphone size={14} aria-hidden="true" />
           <span>Mobile</span>
         </button>
-        <div className="w-[1px] bg-gray-200 dark:bg-gray-800 my-1 self-stretch mx-0.5"></div>
+        <div className="w-[1px] bg-gray-200 dark:bg-gray-800 my-1 self-stretch mx-0.5" role="separator" aria-orientation="vertical"></div>
         <button 
           onClick={() => setDarkMode(!darkMode)}
+          aria-pressed={darkMode}
+          aria-label={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer flex items-center justify-center transition-all"
           title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {darkMode ? <Sun size={15} className="text-yellow-500 animate-pulse" /> : <Moon size={15} className="text-indigo-500" />}
+          {darkMode ? <Sun size={15} className="text-yellow-500 animate-pulse" aria-hidden="true" /> : <Moon size={15} className="text-indigo-500" aria-hidden="true" />}
         </button>
       </div>
 
