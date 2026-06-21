@@ -1,0 +1,574 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for frontend/constants.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">frontend</a> constants.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>44/44</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>22/22</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>3/3</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>33/33</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">77x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { GovTarget } from './types';
+&nbsp;
+export const LANGUAGES = [
+  'English', 'Hindi', 'Marathi', 'Bengali', 'Tamil', 'Telugu', 'Kannada', 
+  'Malayalam', 'Gujarati', 'Punjabi', 'Urdu', 'Arabic', 'Spanish', 
+  'French', 'German', 'Portuguese', 'Chinese', 'Japanese', 'Korean'
+];
+&nbsp;
+export const COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", 
+  "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", 
+  "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", 
+  "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", 
+  "Croatia", "Cuba", "Cyprus", "Czechia", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", 
+  "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", 
+  "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", 
+  "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", 
+  "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Korea (North)", "Korea (South)", "Kuwait", 
+  "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", 
+  "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", 
+  "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", 
+  "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Macedonia", "Norway", "Oman", "Pakistan", 
+  "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", 
+  "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", 
+  "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", 
+  "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", 
+  "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", 
+  "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", 
+  "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+];
+&nbsp;
+export const getStatesForCountry = (country: string): string[] =&gt; {
+  if (!country) return [];
+  if (country === 'India') return ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi'];
+  if (country === 'United States of America') return ['California', 'Texas', 'Florida', 'New York', 'Pennsylvania', 'Illinois', 'Ohio', 'Georgia', 'North Carolina', 'Michigan'];
+  if (country === 'United Kingdom') return ['England', 'Scotland', 'Wales', 'Northern Ireland'];
+  return [`State 1`, `State 2`, `State 3`, `State 4`];
+};
+&nbsp;
+export const getCitiesForState = (state: string): string[] =&gt; {
+  if (!state) return [];
+  if (state === 'Maharashtra') return ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Aurangabad'];
+  if (state === 'Delhi') return ['New Delhi', 'North Delhi', 'South Delhi', 'East Delhi', 'West Delhi'];
+  if (state === 'Karnataka') return ['Bengaluru', 'Mysuru', 'Hubballi', 'Mangaluru', 'Belagavi'];
+  if (state === 'California') return ['Los Angeles', 'San Francisco', 'San Diego', 'San Jose', 'Sacramento'];
+  if (state === 'England') return ['London', 'Birmingham', 'Manchester', 'Leeds', 'Liverpool'];
+  return [`City A`, `City B`, `City C`];
+};
+&nbsp;
+export const AGE_GROUPS = ['Under 13', '13–17', '18–24', '25–34', '35–44', '45–54', '55–64', '65+'];
+export const GENDERS = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
+export const OCCUPATIONS = ['Student', 'Employee', 'Business', 'Freelancer', 'Homemaker', 'Teacher', 'Healthcare', 'Retired', 'Other'];
+&nbsp;
+export const GOALS = [
+  '🌍 Reduce Carbon Footprint',
+  '🍃 Improve Healthy Living',
+  '⚡ Save Electricity',
+  '💧 Save Water',
+  '🏆 Earn Green XP',
+  '🌱 Balanced Lifestyle'
+];
+&nbsp;
+export const TRACKER_MODES = ['🤖 AI Automatic Tracker', '✍️ Manual Tracker'];
+export const AI_CATEGORIES = ['Carbon Reduction', 'Healthy Living', 'Electricity Saving', 'Water Saving', 'Green XP', 'Balanced Lifestyle'];
+export const AI_LEVELS = ['Easy', 'Standard', 'Advanced', 'Student', 'Family', 'Professional', 'Senior Citizen', 'Custom'];
+&nbsp;
+export const MANUAL_CATEGORIES = [
+  { name: 'Transport', options: ['Walking', 'Cycling', 'Bike', 'EV', 'Petrol Car', 'Diesel Car', 'Metro', 'Bus', 'Train', 'Flight', 'Ship'] },
+  { name: 'Electricity', options: ['AC', 'Fan', 'TV', 'Fridge', 'Laptop', 'Desktop', 'LED', 'Water Heater', 'Washing Machine', 'Kitchen Appliances', 'Other'] },
+  { name: 'Food', options: ['Vegetarian', 'Vegan', 'Chicken', 'Fish', 'Dairy', 'Fast Food', 'Processed Food', 'Custom'] },
+  { name: 'Water', options: ['Shower', 'Kitchen', 'Laundry', 'Garden', 'Cleaning', 'Drinking', 'Custom'] },
+  { name: 'Waste', options: ['Plastic', 'Paper', 'Glass', 'Metal', 'Organic', 'E-Waste', 'Mixed Waste', 'Custom'] },
+  { name: 'Shopping', options: ['Clothes', 'Electronics', 'Furniture', 'Groceries', 'Online Orders', 'Luxury Products', 'Custom'] },
+  { name: 'Digital', options: ['Streaming', 'Gaming', 'AI Usage', 'Cloud Storage', 'Video Calls', 'Social Media', 'Custom'] }
+];
+&nbsp;
+export const MOCK_GOV_TARGETS: Record&lt;string, GovTarget&gt; = {
+  'India': { country: 'India', netZeroYear: 2070, currentEmissionsMt: 2830, targetEmissionsMt: 1415, renewableTargetPct: 50, currentRenewablePct: 43.6, forestTargetPct: 33, lastUpdated: 'Live (UNFCCC Data)', officialSummary: 'Panchamrit strategy: 500GW non-fossil capacity by 2030, 45% emission intensity reduction.' },
+  'United States of America': { country: 'USA', netZeroYear: 2050, currentEmissionsMt: 5222, targetEmissionsMt: 2611, renewableTargetPct: 80, currentRenewablePct: 21.5, forestTargetPct: 30, lastUpdated: 'Live (EPA Data)', officialSummary: 'Reduce net GHG emissions by 50-52% below 2005 levels by 2030. 100% carbon pollution-free electricity by 2035.' },
+  'United Kingdom': { country: 'UK', netZeroYear: 2050, currentEmissionsMt: 384, targetEmissionsMt: 122, renewableTargetPct: 100, currentRenewablePct: 41.5, forestTargetPct: 16, lastUpdated: 'Live (DESNZ Data)', officialSummary: 'Legally binding target to reach net zero by 2050. 68% reduction in emissions by 2030 compared to 1990 levels.' },
+};
+&nbsp;
+export const SECTOR_DATA: Record&lt;string, { percentage: number, description: string, keyActions: string[], globalEmissions: string }&gt; = {
+  'Transport': { percentage: 24, description: 'Accounts for nearly a quarter of direct CO2 emissions from fuel combustion globally. Road vehicles account for nearly 75% of transport emissions.', keyActions: ['EV Adoption', 'Public Transit Expansion', 'Active Mobility (Cycling/Walking)'], globalEmissions: '8.7 GtCO₂e' },
+  'Electricity': { percentage: 40, description: 'The largest single source of global greenhouse gas emissions, primarily driven by coal and natural gas power plants.', keyActions: ['Solar &amp; Wind Integration', 'Grid Modernization', 'Energy Efficiency'], globalEmissions: '14.6 GtCO₂e' },
+  'Industry': { percentage: 21, description: 'Emissions from manufacturing, construction, and chemical processes (like cement and steel production).', keyActions: ['Green Hydrogen', 'Carbon Capture', 'Circular Economy'], globalEmissions: '7.6 GtCO₂e' },
+  'Agriculture': { percentage: 11, description: 'Emissions from livestock digestion, manure management, and synthetic fertilizers.', keyActions: ['Precision Farming', 'Alternative Proteins', 'Soil Carbon Sequestration'], globalEmissions: '4.0 GtCO₂e' },
+  'Buildings': { percentage: 6, description: 'Direct emissions from heating, cooling, and cooking in residential and commercial buildings.', keyActions: ['Better Insulation', 'Heat Pumps', 'Smart Thermostats'], globalEmissions: '2.2 GtCO₂e' },
+  'Aviation': { percentage: 2.5, description: 'A rapidly growing sector. High-altitude emissions have a greater warming impact than ground-level emissions.', keyActions: ['Sustainable Aviation Fuel (SAF)', 'Flight Route Optimization'], globalEmissions: '0.9 GtCO₂e' },
+  'Shipping': { percentage: 3, description: 'International maritime transport relies heavily on heavy fuel oil.', keyActions: ['Ammonia/Methanol Fuels', 'Wind-assisted Propulsion'], globalEmissions: '1.1 GtCO₂e' },
+  'Waste': { percentage: 3.2, description: 'Methane emissions from landfills and wastewater treatment.', keyActions: ['Methane Capture', 'Composting', 'Zero-Waste Policies'], globalEmissions: '1.2 GtCO₂e' },
+  'Digital Economy': { percentage: 4, description: 'Emissions from data centers, network infrastructure, and device manufacturing.', keyActions: ['Renewable-powered Data Centers', 'E-waste Recycling'], globalEmissions: '1.4 GtCO₂e' },
+  'Manufacturing': { percentage: 12, description: 'Energy-intensive production of consumer goods, plastics, and textiles.', keyActions: ['Supply Chain Optimization', 'Renewable Heat'], globalEmissions: '4.3 GtCO₂e' }
+};
+&nbsp;
+export const LEVELS = [
+  { level: 1, name: 'Eco Beginner', minXp: 0 },
+  { level: 2, name: 'Green Explorer', minXp: 500 },
+  { level: 3, name: 'Climate Warrior', minXp: 1500 },
+  { level: 4, name: 'Earth Guardian', minXp: 3000 },
+  { level: 5, name: 'Planet Protector', minXp: 5000 },
+  { level: 6, name: 'Net Zero Hero', minXp: 10000 },
+  { level: 7, name: 'Climate Legend', minXp: 20000 },
+];
+&nbsp;
+export const getLevelName = (xp: number) =&gt; {
+  let currentLevel = LEVELS[0];
+  for (const l of LEVELS) {
+    if (xp &gt;= l.minXp) currentLevel = l;
+  }
+  return currentLevel.name;
+};
+&nbsp;
+// Simulated large database for Carbon Source Library
+export const CARBON_DATABASE = [
+  // Transport
+  { activity: '10km Bicycle', impact: 0.0, rating: '⭐⭐⭐⭐⭐', alt: 'Walking', category: 'Transport', explanation: 'Zero tailpipe emissions. Only human energy required.' },
+  { activity: '10km Metro/Train', impact: 0.4, rating: '⭐⭐⭐⭐', alt: 'Cycling', category: 'Transport', explanation: 'Highly efficient mass transit divides emissions among hundreds of passengers.' },
+  { activity: '10km EV (Solar Charged)', impact: 0.0, rating: '⭐⭐⭐⭐⭐', alt: 'Walking or Cycling', category: 'Transport', explanation: 'Running on 100% renewable energy eliminates operational carbon footprint.' },
+  { activity: '10km EV (Grid Mix)', impact: 0.8, rating: '⭐⭐⭐⭐', alt: 'EV (Solar Charged)', category: 'Transport', explanation: 'Emissions depend on how the local power grid generates electricity (coal vs renewables).' },
+  { activity: '10km Bus', impact: 1.0, rating: '⭐⭐⭐', alt: 'Metro or Train', category: 'Transport', explanation: 'Better than single-occupancy cars, but diesel buses still emit significant CO2.' },
+  { activity: '10km Petrol Car', impact: 2.4, rating: '⭐⭐', alt: 'Carpooling or EV', category: 'Transport', explanation: 'Internal combustion engines burn fossil fuels directly, releasing CO2 per liter burned.' },
+  { activity: '10km Diesel Car', impact: 2.7, rating: '⭐', alt: 'Public Transport', category: 'Transport', explanation: 'Diesel has higher carbon density per liter than petrol, plus harmful particulate matter.' },
+  { activity: '1hr Flight (Economy)', impact: 90.0, rating: '⭐', alt: 'High-Speed Train or Virtual Meeting', category: 'Transport', explanation: 'Aviation fuel burn is massive, and high-altitude emissions have a multiplier warming effect.' },
+  
+  // Electricity
+  { activity: '1hr LED Bulb', impact: 0.01, rating: '⭐⭐⭐⭐⭐', alt: 'Natural Light', category: 'Electricity', explanation: 'LEDs use 80% less energy than traditional incandescent bulbs.' },
+  { activity: '1hr Ceiling Fan', impact: 0.03, rating: '⭐⭐⭐⭐⭐', alt: 'Natural Ventilation', category: 'Electricity', explanation: 'Fans use a fraction of the electricity required by air conditioning compressors.' },
+  { activity: '1 Load Washing Machine (Cold)', impact: 0.2, rating: '⭐⭐⭐⭐', alt: 'Hand wash small items', category: 'Electricity', explanation: '90% of a washing machine\'s energy goes to heating the water. Cold wash saves this.' },
+  { activity: '1hr AC (24°C Setting)', impact: 0.8, rating: '⭐⭐⭐', alt: 'Ceiling Fan', category: 'Electricity', explanation: 'Setting AC to 24°C instead of 18°C reduces compressor load by up to 30%.' },
+  { activity: '1 Load Washing Machine (Hot)', impact: 0.8, rating: '⭐⭐', alt: 'Cold Wash', category: 'Electricity', explanation: 'Heating water electrically is highly energy-intensive.' },
+  { activity: '1hr AC (18°C Setting)', impact: 1.5, rating: '⭐⭐', alt: 'Set AC to 24°C', category: 'Electricity', explanation: 'Forces the compressor to run continuously, drawing maximum power.' },
+  
+  // Digital
+  { activity: '1hr Laptop Usage', impact: 0.02, rating: '⭐⭐⭐⭐⭐', alt: 'Power Saving Mode', category: 'Digital', explanation: 'Laptops are highly optimized for battery life, using very little grid power.' },
+  { activity: '1hr Video Streaming (1080p)', impact: 0.06, rating: '⭐⭐⭐⭐', alt: 'Download over Wi-Fi', category: 'Digital', explanation: 'Data centers and network transmission require electricity to deliver the video.' },
+  { activity: '1hr Video Streaming (4K)', impact: 0.15, rating: '⭐⭐⭐', alt: 'Stream in 1080p', category: 'Digital', explanation: '4K requires 4x more data transmission than 1080p, increasing server and network energy.' },
+  
+  // Shopping
+  { activity: '1 Reusable Cloth Bag', impact: 0.5, rating: '⭐⭐⭐⭐⭐', alt: 'Use existing bags', category: 'Shopping', explanation: 'Has an initial manufacturing footprint, but breaks even after ~50 uses compared to plastic.' },
+  { activity: '1 Cotton T-Shirt', impact: 5.0, rating: '⭐⭐⭐', alt: 'Second-hand or Organic Cotton', category: 'Shopping', explanation: 'Cotton farming requires massive water and fertilizer, plus energy for textile milling.' },
+  { activity: '1 Pair Cotton Trousers', impact: 15.0, rating: '⭐⭐', alt: 'Thrifted Trousers', category: 'Shopping', explanation: 'Heavy cotton fabric production is highly resource-intensive, involving dyeing, washing, and heavy transport.' },
+  { activity: '1 Smartphone', impact: 55.0, rating: '⭐', alt: 'Refurbished Phone or Repair', category: 'Shopping', explanation: 'Mining rare earth metals and complex manufacturing create a huge upfront carbon cost.' },
+  
+  // Food (Vegetarian / Plant-based)
+  { activity: '1kg Local Seasonal Fruit', impact: 0.3, rating: '⭐⭐⭐⭐⭐', alt: 'Grow your own', category: 'Food', explanation: 'Minimal processing and transport emissions when grown locally and in-season.' },
+  { activity: '1kg Vegetables (Root)', impact: 0.4, rating: '⭐⭐⭐⭐⭐', alt: 'Organic farming', category: 'Food', explanation: 'Root vegetables require less fertilizer and have very low post-harvest processing needs.' },
+  { activity: '1kg Lentils/Beans', impact: 0.9, rating: '⭐⭐⭐⭐⭐', alt: 'Buy in bulk', category: 'Food', explanation: 'Legumes fix their own nitrogen, requiring less synthetic fertilizer than other crops.' },
+  { activity: '1kg Tofu', impact: 2.0, rating: '⭐⭐⭐⭐', alt: 'Locally sourced soy', category: 'Food', explanation: 'Processing soybeans into tofu adds some energy cost, but it remains a low-carbon protein.' },
+  { activity: '1kg Rice', impact: 2.5, rating: '⭐⭐⭐', alt: 'Millets or Quinoa', category: 'Food', explanation: 'Flooded rice paddies release methane, a potent greenhouse gas, during cultivation.' },
+  { activity: '1kg Cheese', impact: 13.5, rating: '⭐⭐', alt: 'Plant-based Cheese', category: 'Food', explanation: 'Requires ~10 liters of milk per kg of cheese, inheriting the high emissions of dairy farming.' },
+  
+  // Food (Non-Vegetarian - Moved to bottom, removed beef/pork)
+  { activity: '1kg Chicken', impact: 6.9, rating: '⭐⭐⭐', alt: 'Lentils or Plant-based meats', category: 'Food', explanation: 'Poultry is the most efficient meat, but feed production and farm energy still add up.' },
+  { activity: '1kg Farmed Fish', impact: 9.5, rating: '⭐⭐', alt: 'Wild-caught local fish or Plant-based', category: 'Food', explanation: 'Fish farming requires manufactured feed and energy-intensive water circulation systems.' },
+  { activity: '1kg Lamb/Mutton', impact: 24.0, rating: '⭐', alt: 'Plant-based alternatives', category: 'Food', explanation: 'Ruminant animals produce large amounts of methane during digestion (enteric fermentation).' },
+  
+  // Waste
+  { activity: '1kg Compostable Waste', impact: 0.1, rating: '⭐⭐⭐⭐⭐', alt: 'Home Composting', category: 'Waste', explanation: 'Aerobic decomposition (composting) releases CO2, which is part of the natural carbon cycle.' },
+  { activity: '1 Plastic Bottle', impact: 0.1, rating: '⭐', alt: 'Reusable Steel/Copper Bottle', category: 'Waste', explanation: 'Made from petroleum. If incinerated, it releases fossil carbon; if landfilled, it never degrades.' },
+  { activity: '1kg Recycled Paper', impact: 0.5, rating: '⭐⭐⭐⭐', alt: 'Digital Documents', category: 'Waste', explanation: 'Recycling saves trees and uses 40% less energy than making virgin paper.' },
+  { activity: '1kg Paper Waste (Landfill)', impact: 1.3, rating: '⭐⭐', alt: 'Recycle Paper', category: 'Waste', explanation: 'Paper in landfills decomposes anaerobically, releasing methane instead of CO2.' }
+];
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-06-21T20:29:01.084Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    
