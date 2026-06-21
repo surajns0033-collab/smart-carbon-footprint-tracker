@@ -326,7 +326,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* Main Content */}
           <main className={`flex-1 flex flex-col h-screen overflow-hidden relative transition-colors duration-300 ${currentTheme.content}`}>
-            <div className="flex-1 overflow-y-auto p-4 md:p-8">
+            <div id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto p-4 md:p-8 outline-none">
               <div className="max-w-6xl mx-auto">
                 {children}
               </div>
