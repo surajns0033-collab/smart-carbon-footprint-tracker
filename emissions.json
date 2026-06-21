@@ -1,0 +1,65 @@
+{
+  "China": {
+    "iso_code": "CHN",
+    "year": 2023,
+    "population": 1412000000,
+    "co2": 11680,
+    "co2_per_capita": 8.1,
+    "share_global_co2": 0.33,
+    "temperature_change_from_co2": 1.5
+  },
+  "United States": {
+    "iso_code": "USA",
+    "year": 2023,
+    "population": 331000000,
+    "co2": 5222,
+    "co2_per_capita": 14.2,
+    "share_global_co2": 0.13,
+    "temperature_change_from_co2": 1.2
+  },
+  "India": {
+    "iso_code": "IND",
+    "year": 2023,
+    "population": 1380000000,
+    "co2": 2830,
+    "co2_per_capita": 1.9,
+    "share_global_co2": 0.07,
+    "temperature_change_from_co2": 0.9
+  },
+  "Russia": {
+    "iso_code": "RUS",
+    "year": 2023,
+    "population": 143000000,
+    "co2": 1750,
+    "co2_per_capita": 12.1,
+    "share_global_co2": 0.05,
+    "temperature_change_from_co2": 0.6
+  },
+  "Japan": {
+    "iso_code": "JPN",
+    "year": 2023,
+    "population": 125000000,
+    "co2": 1060,
+    "co2_per_capita": 8.5,
+    "share_global_co2": 0.03,
+    "temperature_change_from_co2": 0.4
+  },
+  "Germany": {
+    "iso_code": "DEU",
+    "year": 2023,
+    "population": 83000000,
+    "co2": 675,
+    "co2_per_capita": 8.1,
+    "share_global_co2": 0.02,
+    "temperature_change_from_co2": 0.3
+  },
+  "United Kingdom": {
+    "iso_code": "GBR",
+    "year": 2023,
+    "population": 67000000,
+    "co2": 384,
+    "co2_per_capita": 5.2,
+    "share_global_co2": 0.01,
+    "temperature_change_from_co2": 0.2
+  }
+}
