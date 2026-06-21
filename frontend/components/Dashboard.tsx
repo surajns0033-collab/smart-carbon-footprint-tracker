@@ -46,16 +46,12 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Top Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats Grid - 2 rows of 4 cards */}
+      <div className="grid grid-cols-4 gap-3 md:gap-4">
         <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} color="bg-eco-50 dark:bg-emerald-950/40" />
         <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} color="bg-blue-50 dark:bg-blue-950/40" />
         <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} color="bg-green-50 dark:bg-green-950/40" />
         <StatCard icon={<Zap className="text-yellow-500"/>} title={t('green_xp')} value={stats.greenXP.toString()} color="bg-yellow-50 dark:bg-yellow-950/40" />
-      </div>
-
-      {/* Secondary Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard icon={<DollarSign className="text-emerald-500"/>} title={t('money_saved')} value={`$${stats.moneySaved.toFixed(2)}`} color="bg-emerald-50 dark:bg-emerald-950/40" />
         <StatCard icon={<Zap className="text-purple-500"/>} title={t('electricity_saved')} value={`${stats.electricitySaved.toFixed(1)} kWh`} color="bg-purple-50 dark:bg-purple-950/40" />
         <StatCard icon={<Droplets className="text-cyan-500"/>} title={t('water_saved')} value={`${stats.waterSaved.toFixed(1)} L`} color="bg-cyan-50 dark:bg-cyan-950/40" />
