@@ -13,7 +13,7 @@ const mockChartData = [
 ];
 
 export const Dashboard: React.FC = () => {
-  const { profile, updateProfile, stats, missions, completeMission, isLoadingMissions } = useAppContext();
+  const { profile, updateProfile, stats, missions, completeMission, isLoadingMissions, viewMode } = useAppContext();
   const { t } = useTranslation();
 
   const handleModeToggle = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -45,9 +45,8 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Stats Grid - 2 rows of 4 cards */}
-      <div className="grid grid-cols-4 gap-3 md:gap-4">
+      {/* Stats Grid - 2 rows of 4 cards on desktop, 2 cols on mobile */}
+      <div className={`grid gap-3 md:gap-4 ${viewMode === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'}`}>
         <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} subtitle="Daily Target: 500kg" color="bg-eco-50 dark:bg-emerald-950/40" />
         <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} subtitle="Status: Excellent" color="bg-blue-50 dark:bg-blue-950/40" />
         <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} subtitle="+14.2% this week" color="bg-green-50 dark:bg-green-950/40" />
@@ -58,9 +57,9 @@ export const Dashboard: React.FC = () => {
         <StatCard icon={<Recycle className="text-orange-500"/>} title={t('waste_recycled')} value={`${stats.wasteRecycled.toFixed(1)} kg`} subtitle="Recycling Ratio: 78%" color="bg-orange-50 dark:bg-orange-950/40" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 gap-6 ${viewMode === 'mobile' ? '' : 'lg:grid-cols-3'}`}>
         {/* Chart Section */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className={viewMode === 'mobile' ? 'w-full space-y-6' : 'lg:col-span-2 space-y-6'}>
           <div className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold flex items-center gap-2 text-gray-800 dark:text-gray-100">
@@ -82,10 +81,10 @@ export const Dashboard: React.FC = () => {
 
           {/* My Climate Contribution */}
           <div className="bg-white/80 dark:bg-gray-900/80 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-850 dark:text-gray-100">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-855 dark:text-gray-100">
               <Globe2 className="text-blue-500"/> {t('climate_contribution')}
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className={`grid gap-4 text-center ${viewMode === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'}`}>
               <div className="p-3 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
                 <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('city')} ({profile?.city !== 'Not Specified' ? profile?.city : 'Local'})</p>
                 <p className="font-bold text-gray-800 dark:text-gray-100">{stats.cityContribution.toFixed(4)}%</p>

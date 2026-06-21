@@ -9,7 +9,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { logout } = useAppContext();
+  const { logout, viewMode, setViewMode } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
@@ -30,14 +30,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   });
 
-  const [viewMode, setViewMode] = React.useState<'desktop' | 'mobile'>(() => {
-    try {
-      return (localStorage.getItem('sc_view_mode') as 'desktop' | 'mobile') || 'desktop';
-    } catch {
-      return 'desktop';
-    }
-  });
-
   const [customUrl, setCustomUrl] = React.useState('');
 
   React.useEffect(() => {
@@ -51,12 +43,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       localStorage.setItem('sc_dark_mode', darkMode ? 'true' : 'false');
     } catch {}
   }, [darkMode]);
-
-  React.useEffect(() => {
-    try {
-      localStorage.setItem('sc_view_mode', viewMode);
-    } catch {}
-  }, [viewMode]);
 
   React.useEffect(() => {
     const handleNav = () => navigate('/tracker');

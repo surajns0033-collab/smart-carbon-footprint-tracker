@@ -8,7 +8,7 @@ import {
 import { useTranslation } from '../services/translation';
 
 export const Profile: React.FC = () => {
-  const { profile, setProfile, stats, logs, resetApp } = useAppContext();
+  const { profile, setProfile, stats, logs, resetApp, viewMode } = useAppContext();
   const { t, lang } = useTranslation();
   const [formData, setFormData] = useState(profile!);
   const [availableStates, setAvailableStates] = useState<string[]>([]);
@@ -187,7 +187,7 @@ export const Profile: React.FC = () => {
         <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }} className="bg-white/90 dark:bg-gray-900/90 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 space-y-6 backdrop-blur-md">
           <h2 className="text-lg font-bold flex items-center gap-2 text-gray-850 dark:text-gray-100"><User className="text-eco-500"/> Edit Profile</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 gap-4 ${viewMode === 'mobile' ? '' : 'md:grid-cols-2'}`}>
             <div>
               <label className="block text-sm font-medium text-gray-750 dark:text-gray-300 mb-1">Name</label>
               <input type="text" className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-eco-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 outline-none transition-shadow" value={formData.userName || ''} onChange={e => setFormData({...formData, userName: e.target.value})} />

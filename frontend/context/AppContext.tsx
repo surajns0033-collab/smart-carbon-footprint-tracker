@@ -14,6 +14,8 @@ interface AppContextType {
   isLoadingMissions: boolean;
   logout: () => void;
   resetApp: () => void;
+  viewMode: 'desktop' | 'mobile';
+  setViewMode: (mode: 'desktop' | 'mobile') => void;
 }
 
 const defaultStats: UserStats = {
@@ -52,6 +54,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   });
   
   const [isLoadingMissions, setIsLoadingMissions] = useState(false);
+
+  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>(() => {
+    try {
+      return (localStorage.getItem('sc_view_mode') as 'desktop' | 'mobile') || 'desktop';
+    } catch {
+      return 'desktop';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('sc_view_mode', viewMode);
+    } catch {}
+  }, [viewMode]);
 
   // Save to localStorage whenever state changes
   useEffect(() => { localStorage.setItem('sc_profile', JSON.stringify(profile)); }, [profile]);
@@ -143,7 +159,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   return (
-    <AppContext.Provider value={{ profile, setProfile, updateProfile, stats, logs, addLog, missions, completeMission, isLoadingMissions, logout, resetApp }}>
+    <AppContext.Provider value={{ profile, setProfile, updateProfile, stats, logs, addLog, missions, completeMission, isLoadingMissions, logout, resetApp, viewMode, setViewMode }}>
       {children}
     </AppContext.Provider>
   );
