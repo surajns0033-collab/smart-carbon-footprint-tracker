@@ -42,6 +42,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     try {
       localStorage.setItem('sc_dark_mode', darkMode ? 'true' : 'false');
     } catch {}
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, [darkMode]);
 
   React.useEffect(() => {
@@ -150,6 +155,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         >
           <Smartphone size={14} />
           <span>Mobile</span>
+        </button>
+        <div className="w-[1px] bg-gray-200 dark:bg-gray-800 my-1 self-stretch mx-0.5"></div>
+        <button 
+          onClick={() => setDarkMode(!darkMode)}
+          className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer flex items-center justify-center transition-all"
+          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {darkMode ? <Sun size={15} className="text-yellow-500 animate-pulse" /> : <Moon size={15} className="text-indigo-500" />}
         </button>
       </div>
 

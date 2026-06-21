@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getLevelName } from '../constants';
-import { Leaf, Zap, Droplets, Trophy, TrendingDown, Activity, CheckCircle2, Circle, Flame, Globe2, DollarSign, Recycle, Settings2 } from 'lucide-react';
+import { Leaf, Zap, Droplets, Trophy, TrendingDown, Activity, CheckCircle2, Circle, Flame, Globe2, DollarSign, Recycle, Settings2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Tutorial } from './Tutorial';
 import { DailyMotivation } from './DailyMotivation';
@@ -15,6 +15,7 @@ const mockChartData = [
 export const Dashboard: React.FC = () => {
   const { profile, updateProfile, stats, missions, completeMission, isLoadingMissions, viewMode } = useAppContext();
   const { t } = useTranslation();
+  const [currentSlide, setCurrentSlide] = React.useState(0);
 
   const handleModeToggle = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateProfile({ trackerMode: e.target.value });
@@ -45,16 +46,55 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Stats Grid - 2 rows of 4 cards on desktop, 2 cols on mobile */}
-      <div className={`grid gap-3 md:gap-4 ${viewMode === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'}`}>
-        <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} subtitle="Daily Target: 500kg" color="bg-eco-50 dark:bg-emerald-950/40" />
-        <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} subtitle="Status: Excellent" color="bg-blue-50 dark:bg-blue-950/40" />
-        <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} subtitle="+14.2% this week" color="bg-green-50 dark:bg-green-950/40" />
-        <StatCard icon={<Zap className="text-yellow-500"/>} title={t('green_xp')} value={stats.greenXP.toString()} subtitle={`Level ${stats.level} Active`} color="bg-yellow-50 dark:bg-yellow-950/40" />
-        <StatCard icon={<DollarSign className="text-emerald-500"/>} title={t('money_saved')} value={`$${stats.moneySaved.toFixed(2)}`} subtitle="Lifetime Savings" color="bg-emerald-50 dark:bg-emerald-950/40" />
-        <StatCard icon={<Zap className="text-purple-500"/>} title={t('electricity_saved')} value={`${stats.electricitySaved.toFixed(1)} kWh`} subtitle="Equivalent Clean Energy" color="bg-purple-50 dark:bg-purple-950/40" />
-        <StatCard icon={<Droplets className="text-cyan-500"/>} title={t('water_saved')} value={`${stats.waterSaved.toFixed(1)} L`} subtitle="Household Conserved" color="bg-cyan-50 dark:bg-cyan-950/40" />
-        <StatCard icon={<Recycle className="text-orange-500"/>} title={t('waste_recycled')} value={`${stats.wasteRecycled.toFixed(1)} kg`} subtitle="Recycling Ratio: 78%" color="bg-orange-50 dark:bg-orange-950/40" />
+      {/* Interactive Next/Prev scorecard carousel */}
+      <div className="relative group px-4">
+        {currentSlide === 0 ? (
+          <div className={`grid gap-3 md:gap-4 ${viewMode === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} w-full animate-fade-in`}>
+            <StatCard icon={<Leaf className="text-eco-500"/>} title={t('carbon_score')} value={`${stats.carbonScore} kg`} subtitle="Daily Target: 500kg" color="bg-eco-50 dark:bg-emerald-950/40" />
+            <StatCard icon={<Activity className="text-blue-500"/>} title={t('health_score')} value={`${stats.healthyLivingScore}/100`} subtitle="Status: Excellent" color="bg-blue-50 dark:bg-blue-950/40" />
+            <StatCard icon={<TrendingDown className="text-green-500"/>} title={t('co2_saved')} value={`${stats.co2SavedKg.toFixed(1)} kg`} subtitle="+14.2% this week" color="bg-green-50 dark:bg-green-950/40" />
+            <StatCard icon={<Zap className="text-yellow-500"/>} title={t('green_xp')} value={stats.greenXP.toString()} subtitle={`Level ${stats.level} Active`} color="bg-yellow-50 dark:bg-yellow-950/40" />
+          </div>
+        ) : (
+          <div className={`grid gap-3 md:gap-4 ${viewMode === 'mobile' ? 'grid-cols-2' : 'grid-cols-4'} w-full animate-fade-in`}>
+            <StatCard icon={<DollarSign className="text-emerald-500"/>} title={t('money_saved')} value={`$${stats.moneySaved.toFixed(2)}`} subtitle="Lifetime Savings" color="bg-emerald-50 dark:bg-emerald-950/40" />
+            <StatCard icon={<Zap className="text-purple-500"/>} title={t('electricity_saved')} value={`${stats.electricitySaved.toFixed(1)} kWh`} subtitle="Equivalent Clean Energy" color="bg-purple-50 dark:bg-purple-950/40" />
+            <StatCard icon={<Droplets className="text-cyan-500"/>} title={t('water_saved')} value={`${stats.waterSaved.toFixed(1)} L`} subtitle="Household Conserved" color="bg-cyan-50 dark:bg-cyan-950/40" />
+            <StatCard icon={<Recycle className="text-orange-500"/>} title={t('waste_recycled')} value={`${stats.wasteRecycled.toFixed(1)} kg`} subtitle="Recycling Ratio: 78%" color="bg-orange-50 dark:bg-orange-950/40" />
+          </div>
+        )}
+
+        {/* Left Arrow Button */}
+        <button
+          onClick={() => setCurrentSlide(prev => (prev === 0 ? 1 : 0))}
+          className="absolute left-[-10px] top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 hover:bg-white dark:hover:bg-gray-800 text-gray-850 dark:text-gray-100 p-2 rounded-full shadow-lg border border-gray-100 dark:border-gray-800 hover:scale-110 transition-all z-10 cursor-pointer flex items-center justify-center"
+          title="Previous Slide"
+        >
+          <ChevronLeft size={20} />
+        </button>
+
+        {/* Right Arrow Button */}
+        <button
+          onClick={() => setCurrentSlide(prev => (prev === 0 ? 1 : 0))}
+          className="absolute right-[-10px] top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/90 hover:bg-white dark:hover:bg-gray-800 text-gray-850 dark:text-gray-100 p-2 rounded-full shadow-lg border border-gray-100 dark:border-gray-800 hover:scale-110 transition-all z-10 cursor-pointer flex items-center justify-center"
+          title="Next Slide"
+        >
+          <ChevronRight size={20} />
+        </button>
+
+        {/* Slide Indicators */}
+        <div className="flex justify-center items-center gap-1.5 mt-3">
+          <button 
+            onClick={() => setCurrentSlide(0)}
+            className={`h-2 rounded-full transition-all duration-300 ${currentSlide === 0 ? 'w-6 bg-eco-500' : 'w-2 bg-gray-300 dark:bg-gray-700'}`}
+            title="Slide 1"
+          />
+          <button 
+            onClick={() => setCurrentSlide(1)}
+            className={`h-2 rounded-full transition-all duration-300 ${currentSlide === 1 ? 'w-6 bg-eco-500' : 'w-2 bg-gray-300 dark:bg-gray-700'}`}
+            title="Slide 2"
+          />
+        </div>
       </div>
 
       <div className={`grid grid-cols-1 gap-6 ${viewMode === 'mobile' ? '' : 'lg:grid-cols-3'}`}>
