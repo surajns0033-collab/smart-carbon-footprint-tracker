@@ -49,6 +49,13 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error('[SmartCarbon ErrorBoundary]', error, info.componentStack);
+    if (error && error.message && (
+      error.message.includes('dynamically imported module') || 
+      error.message.includes('Failed to fetch')
+    )) {
+      console.warn('Dynamic import chunk error detected. Auto-reloading page...');
+      window.location.reload();
+    }
   }
 
   render() {
@@ -132,4 +139,12 @@ export default function App() {
       </BrowserRouter>
     </AppProvider>
   );
+}
+
+// Automatically recover from chunk loading / asset cache mismatches by reloading the page
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', () => {
+    console.warn('Vite preload error detected. Force reloading page...');
+    window.location.reload();
+  });
 }
