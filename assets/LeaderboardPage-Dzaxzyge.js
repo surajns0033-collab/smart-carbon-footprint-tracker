@@ -1,1 +1,0 @@
-import{n as e,r as t}from"./createLucideIcon-X_kUInbS.js";import{t as n}from"./Views-D7p2YXKm.js";t();var r=e(),i=()=>(0,r.jsx)(`div`,{className:`p-6 max-w-5xl mx-auto`,children:(0,r.jsx)(n,{})});export{i as default};
