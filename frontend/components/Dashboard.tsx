@@ -189,13 +189,13 @@ export const Dashboard: React.FC = () => {
 };
 
 const StatCard = ({ icon, title, value, color }: any) => (
-  <div className="bg-white/80 dark:bg-gray-900/80 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md flex items-center gap-3">
-    <div className={`p-3 rounded-xl ${color}`}>
-      {icon}
+  <div className="bg-white/90 dark:bg-gray-900/90 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 backdrop-blur-md flex flex-col items-center justify-center text-center gap-2 aspect-square transition-all duration-300 hover:scale-[1.03] hover:shadow-md">
+    <div className={`p-3.5 rounded-full ${color} flex items-center justify-center`}>
+      {React.cloneElement(icon, { size: 24 })}
     </div>
-    <div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{title}</p>
-      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">{value}</h3>
+    <div className="space-y-1">
+      <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">{title}</p>
+      <h3 className="text-xl font-black text-gray-850 dark:text-gray-100">{value}</h3>
     </div>
   </div>
 );
