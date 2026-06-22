@@ -6,14 +6,22 @@ import { Layout } from './components/Layout';
 // ── Lazy loaded page components for code-splitting & efficiency ──
 const OnboardingPage  = lazy(() => import('./pages/OnboardingPage'));
 const DashboardPage   = lazy(() => import('./pages/DashboardPage'));
-const TrackerPage     = lazy(() => import('./pages/TrackerPage'));
-const GovTargetsPage  = lazy(() => import('./pages/GovTargetsPage'));
+const DailyLogPage     = lazy(() => import('./pages/DailyLogPage'));
+const AnalyticsPage   = lazy(() => import('./pages/AnalyticsPage'));
+const GoalsPage       = lazy(() => import('./pages/GoalsPage'));
+const AICoachPage      = lazy(() => import('./pages/AICoachPage'));
+const ChallengesPage  = lazy(() => import('./pages/ChallengesPage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
+const CommunityPage   = lazy(() => import('./pages/CommunityPage'));
+const GlobalExplorerPage = lazy(() => import('./pages/GlobalExplorerPage'));
+const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const EcoCompanionPage = lazy(() => import('./pages/EcoCompanionPage'));
+const SettingsPage     = lazy(() => import('./pages/SettingsPage'));
+
+// Utility pages (kept for full compatibility)
 const SimulatorPage   = lazy(() => import('./pages/SimulatorPage'));
 const LibraryPage     = lazy(() => import('./pages/LibraryPage'));
-const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const LearnHubPage    = lazy(() => import('./pages/LearnHubPage'));
-const AIChatPage      = lazy(() => import('./pages/AIChatPage'));
-const ProfilePage     = lazy(() => import('./pages/ProfilePage'));
 
 // ── Loading fallback with accessible announcement ──
 const PageLoadingFallback: React.FC = () => (
@@ -106,14 +114,24 @@ const MainApp: React.FC = () => {
           <Routes>
             <Route path="/"            element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard"   element={<DashboardPage />} />
-            <Route path="/tracker"     element={<TrackerPage />} />
-            <Route path="/gov"         element={<GovTargetsPage />} />
+            <Route path="/daily-log"   element={<DailyLogPage />} />
+            <Route path="/tracker"     element={<Navigate to="/daily-log" replace />} />
+            <Route path="/analytics"   element={<AnalyticsPage />} />
+            <Route path="/goals"       element={<GoalsPage />} />
+            <Route path="/gov"         element={<Navigate to="/goals" replace />} />
+            <Route path="/ai-coach"    element={<AICoachPage />} />
+            <Route path="/ai"          element={<Navigate to="/ai-coach" replace />} />
+            <Route path="/challenges"  element={<ChallengesPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/community"   element={<CommunityPage />} />
+            <Route path="/global-explorer" element={<GlobalExplorerPage />} />
+            <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/eco-companion" element={<EcoCompanionPage />} />
+            <Route path="/settings"    element={<SettingsPage />} />
+            <Route path="/profile"     element={<Navigate to="/settings" replace />} />
             <Route path="/simulator"   element={<SimulatorPage />} />
             <Route path="/library"     element={<LibraryPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/learn"       element={<LearnHubPage />} />
-            <Route path="/ai"          element={<AIChatPage />} />
-            <Route path="/profile"     element={<ProfilePage />} />
           </Routes>
         </Suspense>
       </ErrorBoundary>

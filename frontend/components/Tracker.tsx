@@ -86,7 +86,7 @@ const AIAutomaticTracker = () => {
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <span className="text-xs font-bold text-eco-600 dark:text-teal-400 uppercase tracking-wider mb-1 block">{mission.category}</span>
-                  <h3 className={`font-semibold text-lg ${mission.completed ? 'text-gray-500 line-through dark:text-gray-450' : 'text-gray-800 dark:text-gray-100'}`}>{mission.title}</h3>
+                  <h3 className={`font-semibold text-lg ${mission.completed ? 'text-gray-500 line-through dark:text-gray-400' : 'text-gray-800 dark:text-gray-100'}`}>{mission.title}</h3>
                 </div>
                 <button onClick={() => completeMission(mission.id)} disabled={mission.completed} className="text-eco-500 dark:text-teal-400 hover:text-eco-700 disabled:text-gray-300 transition-colors cursor-pointer">
                   {mission.completed ? <CheckCircle2 size={28} /> : <Circle size={28} />}

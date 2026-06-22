@@ -14,15 +14,35 @@ window.matchMedia = window.matchMedia || function() {
 };
 
 const mockLogout = vi.fn();
-const mockSetViewMode = vi.fn();
 
 vi.mock('../../context/AppContext', () => ({
   useAppContext: () => ({
     logout: mockLogout,
-    viewMode: 'desktop',
-    setViewMode: mockSetViewMode,
     profile: {
-      language: 'English'
+      language: 'English',
+      userName: 'Arjun Sharma',
+      city: 'Mumbai',
+      state: 'Maharashtra',
+      country: 'India',
+      goal: 'Reduce by 20%',
+      trackerMode: '🤖 AI Automatic Tracker'
+    },
+    stats: {
+      carbonScore: 850,
+      healthyLivingScore: 50,
+      greenXP: 100,
+      level: 1,
+      co2SavedKg: 0,
+      moneySaved: 0,
+      electricitySaved: 0,
+      waterSaved: 0,
+      wasteRecycled: 0,
+      treesEquivalent: 0,
+      streakDays: 1,
+      countryContribution: 0.0001,
+      stateContribution: 0.005,
+      cityContribution: 0.02,
+      globalContribution: 0.000001
     }
   })
 }));
@@ -46,11 +66,11 @@ describe('Layout Component', () => {
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
 
     // Verify sidebar brand name renders
-    expect(screen.getByText(/Smart Carbon/i)).toBeInTheDocument();
+    expect(screen.getByText(/EcoTrack/i)).toBeInTheDocument();
 
     // Verify nav links render
     expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Tracker/i)).toBeInTheDocument();
+    expect(screen.getByText(/Daily Log/i)).toBeInTheDocument();
 
     // Verify logout button renders and triggers action
     const logoutBtn = screen.getByRole('button', { name: /Logout/i });
@@ -68,11 +88,12 @@ describe('Layout Component', () => {
       </MemoryRouter>
     );
 
-    const themeToggle = screen.getAllByTitle(/Switch to Dark Mode/i)[0];
+    // Since it defaults to Dark Mode, match by 'Switch to Light Mode'
+    const themeToggle = screen.getByRole('button', { name: /Switch to Light Mode/i });
     expect(themeToggle).toBeInTheDocument();
     fireEvent.click(themeToggle);
 
-    // Document element class should contain 'dark'
-    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    // Document element class should NOT contain 'dark' after switching to light
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });

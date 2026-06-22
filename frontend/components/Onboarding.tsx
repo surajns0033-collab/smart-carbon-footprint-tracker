@@ -106,7 +106,7 @@ export const Onboarding: React.FC = () => {
               <button 
                 type="button" 
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-4 bg-gray-150 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-750 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-all text-lg cursor-pointer"
+                className="px-6 py-4 bg-gray-200 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-750 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-all text-lg cursor-pointer"
               >
                 Back
               </button>

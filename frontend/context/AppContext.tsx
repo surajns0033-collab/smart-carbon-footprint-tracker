@@ -9,6 +9,7 @@ interface AppContextType {
   stats: UserStats;
   logs: ActivityLog[];
   addLog: (log: Omit<ActivityLog, 'id' | 'date'>) => void;
+  deleteLog: (id: string) => void;
   missions: AIMission[];
   completeMission: (id: string) => void;
   isLoadingMissions: boolean;
@@ -44,13 +45,46 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     try { const saved = localStorage.getItem('sc_profile'); return saved ? JSON.parse(saved) : null; } catch { return null; }
   });
   const [stats, setStats] = useState<UserStats>(() => {
-    try { const saved = localStorage.getItem('sc_stats'); return saved ? JSON.parse(saved) : defaultStats; } catch { return defaultStats; }
+    try {
+      const savedProfileStr = localStorage.getItem('sc_profile');
+      if (savedProfileStr) {
+        const uName = JSON.parse(savedProfileStr).userName;
+        const saved = localStorage.getItem(`sc_stats_${uName}`);
+        if (saved) return JSON.parse(saved);
+      }
+      const saved = localStorage.getItem('sc_stats');
+      return saved ? JSON.parse(saved) : defaultStats;
+    } catch {
+      return defaultStats;
+    }
   });
   const [logs, setLogs] = useState<ActivityLog[]>(() => {
-    try { const saved = localStorage.getItem('sc_logs'); return saved ? JSON.parse(saved) : []; } catch { return []; }
+    try {
+      const savedProfileStr = localStorage.getItem('sc_profile');
+      if (savedProfileStr) {
+        const uName = JSON.parse(savedProfileStr).userName;
+        const saved = localStorage.getItem(`sc_logs_${uName}`);
+        if (saved) return JSON.parse(saved);
+      }
+      const saved = localStorage.getItem('sc_logs');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
   const [missions, setMissions] = useState<AIMission[]>(() => {
-    try { const saved = localStorage.getItem('sc_missions'); return saved ? JSON.parse(saved) : []; } catch { return []; }
+    try {
+      const savedProfileStr = localStorage.getItem('sc_profile');
+      if (savedProfileStr) {
+        const uName = JSON.parse(savedProfileStr).userName;
+        const saved = localStorage.getItem(`sc_missions_${uName}`);
+        if (saved) return JSON.parse(saved);
+      }
+      const saved = localStorage.getItem('sc_missions');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
   
   const [isLoadingMissions, setIsLoadingMissions] = useState(false);
@@ -63,17 +97,97 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   });
 
+  const currentUserRef = React.useRef<string | null>(profile?.userName || null);
+
   useEffect(() => {
     try {
       localStorage.setItem('sc_view_mode', viewMode);
     } catch {}
   }, [viewMode]);
 
-  // Save to localStorage whenever state changes
-  useEffect(() => { localStorage.setItem('sc_profile', JSON.stringify(profile)); }, [profile]);
-  useEffect(() => { localStorage.setItem('sc_stats', JSON.stringify(stats)); }, [stats]);
-  useEffect(() => { localStorage.setItem('sc_logs', JSON.stringify(logs)); }, [logs]);
-  useEffect(() => { localStorage.setItem('sc_missions', JSON.stringify(missions)); }, [missions]);
+  // Sync profile to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('sc_profile', JSON.stringify(profile));
+    } catch {}
+  }, [profile]);
+
+  // Load user-specific stats, logs, missions when profile changes
+  useEffect(() => {
+    const newUName = profile?.userName || null;
+    const oldUName = currentUserRef.current;
+    if (newUName !== oldUName) {
+      if (newUName) {
+        // If old user had data, and new user does not have data in localStorage,
+        // it means they just renamed their profile. Migrate their data!
+        const hasNewUserStats = localStorage.getItem(`sc_stats_${newUName}`);
+        if (!hasNewUserStats && oldUName) {
+          try {
+            const oldStats = localStorage.getItem(`sc_stats_${oldUName}`);
+            const oldLogs = localStorage.getItem(`sc_logs_${oldUName}`);
+            const oldMissions = localStorage.getItem(`sc_missions_${oldUName}`);
+            if (oldStats) localStorage.setItem(`sc_stats_${newUName}`, oldStats);
+            if (oldLogs) localStorage.setItem(`sc_logs_${newUName}`, oldLogs);
+            if (oldMissions) localStorage.setItem(`sc_missions_${newUName}`, oldMissions);
+          } catch (e) {
+            console.error("Migration failed", e);
+          }
+        }
+
+        try {
+          const savedStats = localStorage.getItem(`sc_stats_${newUName}`);
+          setStats(savedStats ? JSON.parse(savedStats) : defaultStats);
+        } catch {
+          setStats(defaultStats);
+        }
+        try {
+          const savedLogs = localStorage.getItem(`sc_logs_${newUName}`);
+          setLogs(savedLogs ? JSON.parse(savedLogs) : []);
+        } catch {
+          setLogs([]);
+        }
+        try {
+          const savedMissions = localStorage.getItem(`sc_missions_${newUName}`);
+          setMissions(savedMissions ? JSON.parse(savedMissions) : []);
+        } catch {
+          setMissions([]);
+        }
+      } else {
+        setStats(defaultStats);
+        setLogs([]);
+        setMissions([]);
+      }
+      currentUserRef.current = newUName;
+    }
+  }, [profile?.userName]);
+
+  // Save to user-specific localStorage whenever state changes, only if username matches
+  useEffect(() => {
+    if (profile && profile.userName === currentUserRef.current) {
+      try {
+        localStorage.setItem(`sc_stats_${profile.userName}`, JSON.stringify(stats));
+        localStorage.setItem('sc_stats', JSON.stringify(stats));
+      } catch {}
+    }
+  }, [stats, profile]);
+
+  useEffect(() => {
+    if (profile && profile.userName === currentUserRef.current) {
+      try {
+        localStorage.setItem(`sc_logs_${profile.userName}`, JSON.stringify(logs));
+        localStorage.setItem('sc_logs', JSON.stringify(logs));
+      } catch {}
+    }
+  }, [logs, profile]);
+
+  useEffect(() => {
+    if (profile && profile.userName === currentUserRef.current) {
+      try {
+        localStorage.setItem(`sc_missions_${profile.userName}`, JSON.stringify(missions));
+        localStorage.setItem('sc_missions', JSON.stringify(missions));
+      } catch {}
+    }
+  }, [missions, profile]);
 
   const updateProfile = (updates: Partial<UserProfile>) => {
     setProfile(prev => prev ? { ...prev, ...updates } : null);
@@ -142,12 +256,52 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }));
   };
 
+  const deleteLog = (id: string) => {
+    const logToDelete = logs.find(l => l.id === id);
+    if (!logToDelete) return;
+
+    setLogs(prev => prev.filter(l => l.id !== id));
+
+    setStats(prev => {
+      const co2Impact = logToDelete.co2Impact;
+      const co2Saved = co2Impact < 0 ? Math.abs(co2Impact) : 0;
+      const xpEarned = logToDelete.xpEarned;
+      
+      let money = 0, elec = 0, water = 0, waste = 0;
+      if (logToDelete.category === 'Electricity' && co2Saved > 0) { elec = co2Saved * 2; money = elec * 0.15; }
+      if (logToDelete.category === 'Water' && co2Saved > 0) { water = co2Saved * 10; money = water * 0.05; }
+      if (logToDelete.category === 'Waste' && co2Saved > 0) { waste = co2Saved * 0.5; }
+      if (logToDelete.category === 'Transport' && co2Saved > 0) { money = co2Saved * 0.5; }
+
+      return {
+        ...prev,
+        greenXP: Math.max(0, prev.greenXP - xpEarned),
+        co2SavedKg: Math.max(0, prev.co2SavedKg - co2Saved),
+        carbonScore: Math.max(0, prev.carbonScore - co2Impact),
+        healthyLivingScore: Math.max(0, Math.min(100, prev.healthyLivingScore - (co2Impact < 0 ? 2 : -1))),
+        moneySaved: Math.max(0, prev.moneySaved - money),
+        electricitySaved: Math.max(0, prev.electricitySaved - elec),
+        waterSaved: Math.max(0, prev.waterSaved - water),
+        wasteRecycled: Math.max(0, prev.wasteRecycled - waste),
+        countryContribution: Math.max(0, prev.countryContribution - (co2Saved * 0.00001)),
+        stateContribution: Math.max(0, prev.stateContribution - (co2Saved * 0.0001)),
+        cityContribution: Math.max(0, prev.cityContribution - (co2Saved * 0.001)),
+      };
+    });
+  };
+
   const logout = () => {
     setProfile(null);
     // Keeps stats/logs in local storage, just requires re-entering profile info
   };
 
   const resetApp = () => {
+    if (profile) {
+      const uName = profile.userName;
+      localStorage.removeItem(`sc_stats_${uName}`);
+      localStorage.removeItem(`sc_logs_${uName}`);
+      localStorage.removeItem(`sc_missions_${uName}`);
+    }
     localStorage.removeItem('sc_profile');
     localStorage.removeItem('sc_stats');
     localStorage.removeItem('sc_logs');
@@ -159,7 +313,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   return (
-    <AppContext.Provider value={{ profile, setProfile, updateProfile, stats, logs, addLog, missions, completeMission, isLoadingMissions, logout, resetApp, viewMode, setViewMode }}>
+    <AppContext.Provider value={{ profile, setProfile, updateProfile, stats, logs, addLog, deleteLog, missions, completeMission, isLoadingMissions, logout, resetApp, viewMode, setViewMode }}>
       {children}
     </AppContext.Provider>
   );

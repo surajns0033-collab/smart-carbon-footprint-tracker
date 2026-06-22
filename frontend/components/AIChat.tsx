@@ -7,7 +7,7 @@ import { useTranslation } from '../services/translation';
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY, vertexai: true });
 
 export const AIChat: React.FC = () => {
-  const { profile, stats } = useAppContext();
+  const { profile, stats, logs } = useAppContext();
   const { t } = useTranslation();
   const [messages, setMessages] = useState<{role: 'user' | 'model', text: string}[]>([]);
   const [input, setInput] = useState('');
@@ -26,6 +26,12 @@ export const AIChat: React.FC = () => {
   useEffect(() => {
     if (!profile) return;
 
+    // Format the recent 15 logs
+    const recentLogsStr = logs.slice(0, 15).map(l => {
+      const dateStr = l.date ? l.date.split('T')[0] : 'No date';
+      return `- [${dateStr}] ${l.description} (${l.category}): ${l.co2Impact} kg CO2, +${l.xpEarned} XP`;
+    }).join('\n');
+
     // Initialize the chat session with deep context about the user and the app
     const systemInstruction = `You are the Smart Carbon Tracker AI Assistant.
     
@@ -36,11 +42,14 @@ export const AIChat: React.FC = () => {
     - Current Goal: ${profile.goal}
     
     User's Current Stats:
-    - Carbon Score: ${stats.carbonScore} kg (Lower is better)
+    - Carbon Score (Total Emissions): ${stats.carbonScore} kg CO2 (Lower is better)
     - Green XP: ${stats.greenXP} (Level ${stats.level})
     - Health Score: ${stats.healthyLivingScore}/100
-    - CO2 Saved: ${stats.co2SavedKg} kg
+    - CO2 Saved (Total Savings): ${stats.co2SavedKg} kg
     - Money Saved: $${stats.moneySaved}
+    
+    User's Recent Activity Logs (up to 15):
+    ${recentLogsStr || 'No activities logged yet.'}
     
     App Context & Features:
     - The app tracks carbon footprints, healthy living, and government climate targets.
@@ -80,7 +89,8 @@ export const AIChat: React.FC = () => {
     setMessages([
       { role: 'model', text: greeting }
     ]);
-  }, [profile, stats]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.userName]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +110,7 @@ export const AIChat: React.FC = () => {
       }
     } catch (error) {
       console.warn("Vertex AI connection failed, using local smart sustainability advisor fallback:", error);
-      const fallbackResponse = getLocalAIResponse(userMsg, profile, stats);
+      const fallbackResponse = getLocalAIResponse(userMsg, profile, stats, logs);
       // Wait a tiny bit to simulate typing
       await new Promise(r => setTimeout(r, 600));
       setMessages(prev => [...prev, { role: 'model', text: fallbackResponse }]);
@@ -140,7 +150,7 @@ export const AIChat: React.FC = () => {
     return preferredLang;
   };
 
-  const getLocalAIResponse = (message: string, userProfile: any, userStats: any): string => {
+  const getLocalAIResponse = (message: string, userProfile: any, userStats: any, userLogs: any[] = []): string => {
     const preferredLang = userProfile?.language || 'English';
     const lang = detectLanguage(message, preferredLang);
 
@@ -157,12 +167,43 @@ export const AIChat: React.FC = () => {
     // Multi-language keyword lists
     const helloKeywords = ['hello', 'hi', 'hey', 'नमस्ते', 'hola', 'नमस्कार', 'bonjour', 'hallo', 'ola', 'काही', 'कसा'];
     const scoreKeywords = ['score', 'stat', 'current', 'level', 'xp', 'स्कोर', 'लेवल', 'स्थिति', 'अंक', 'puntos', 'nivel', 'puntaje', 'point', 'note', 'stats', 'progress', 'गुण', 'पातळी'];
-    const transportKeywords = ['transport', 'car', 'vehicle', 'bike', 'walk', 'cycle', 'यात्रा', 'गाड़ी', 'कार', 'سفر', 'coche', 'caminar', 'bicicleta', 'viaje', 'transporte', 'voiture', 'marcher', 'vélo', 'प्रवास', 'सायकल', 'बस', 'गाडी'];
+    const transportKeywords = ['transport', 'car', 'vehicle', 'bike', 'walk', 'cycle', 'यात्रा', 'गाड़ी', 'कार', 'सफर', 'coche', 'caminar', 'bicicleta', 'viaje', 'transporte', 'voiture', 'marcher', 'vélo', 'प्रवास', 'सायकल', 'बस', 'गाडी'];
     const energyKeywords = ['solar', 'electricity', 'energy', 'power', 'light', 'बिजली', 'ऊर्जा', 'सौर', 'luz', 'energía', 'sol', 'electricidad', 'courant', 'ampoule', 'panneau', 'kwh', 'plug', 'unplug', 'वीज', 'उर्जा'];
     const foodKeywords = ['food', 'eat', 'meat', 'vegan', 'vegetarian', 'diet', 'भोजन', 'खाना', 'सब्जी', 'मांस', 'शाकाहारी', 'comida', 'carne', 'vegetariano', 'nourriture', 'manger', 'repas', 'veggie', 'जेवण', 'अन्न', 'शाकाहारी'];
     const reduceKeywords = ['how', 'reduce', 'tips', 'help', 'कम', 'तरीका', 'सुझाव', 'reducir', 'consejo', 'aide', 'comment', 'réduire', 'decrease', 'action', 'कमी', 'मदत', 'टीप'];
 
     const matches = (keywords: string[]) => keywords.some(k => msg.includes(k));
+
+    // Dynamic calculations from userLogs
+    const totalLogs = userLogs.length;
+    
+    // Filters
+    const transportLogs = userLogs.filter(l => l.category === 'Transport');
+    const energyLogs = userLogs.filter(l => l.category === 'Electricity' || l.category === 'Energy');
+    const foodLogs = userLogs.filter(l => l.category === 'Food');
+    const waterLogs = userLogs.filter(l => l.category === 'Water');
+    const wasteLogs = userLogs.filter(l => l.category === 'Waste');
+
+    // Counts
+    const transportCount = transportLogs.length;
+    const energyCount = energyLogs.length;
+    const foodCount = foodLogs.length;
+    const waterCount = waterLogs.length;
+    const wasteCount = wasteLogs.length;
+
+    // Percentages
+    const transportPct = totalLogs > 0 ? Math.round((transportCount / totalLogs) * 100) : 0;
+    const energyPct = totalLogs > 0 ? Math.round((energyCount / totalLogs) * 100) : 0;
+    const foodPct = totalLogs > 0 ? Math.round((foodCount / totalLogs) * 100) : 0;
+    const waterPct = totalLogs > 0 ? Math.round((waterCount / totalLogs) * 100) : 0;
+    const wastePct = totalLogs > 0 ? Math.round((wasteCount / totalLogs) * 100) : 0;
+
+    // Net impacts (CO2 impact can be positive or negative)
+    const transportNet = parseFloat(transportLogs.reduce((sum, l) => sum + l.co2Impact, 0).toFixed(1));
+    const energyNet = parseFloat(energyLogs.reduce((sum, l) => sum + l.co2Impact, 0).toFixed(1));
+    const foodNet = parseFloat(foodLogs.reduce((sum, l) => sum + l.co2Impact, 0).toFixed(1));
+    const waterNet = parseFloat(waterLogs.reduce((sum, l) => sum + l.co2Impact, 0).toFixed(1));
+    const wasteNet = parseFloat(wasteLogs.reduce((sum, l) => sum + l.co2Impact, 0).toFixed(1));
 
     if (matches(helloKeywords)) {
       return respond(
@@ -176,33 +217,98 @@ export const AIChat: React.FC = () => {
 
     if (matches(scoreKeywords)) {
       return respond(
-        `Your current Carbon Score is ${userStats.carbonScore} kg (lower is better). You are at Level ${userStats.level} with ${userStats.greenXP} Green XP. You have successfully saved ${userStats.co2SavedKg.toFixed(1)} kg of CO₂ and saved $${userStats.moneySaved.toFixed(2)} so far! Keep it up!`,
-        `आपका वर्तमान कार्बन स्कोर ${userStats.carbonScore} किलोग्राम है (जितना कम हो उतना अच्छा है)। आप ${userStats.greenXP} ग्रीन एक्सपी के साथ लेवल ${userStats.level} पर हैं। आपने अब तक कुल ${userStats.co2SavedKg.toFixed(1)} किलोग्राम CO₂ बचाया है और $${userStats.moneySaved.toFixed(2)} की बचत की है! इसे जारी रखें!`,
-        `तुमचा सध्याचा कार्बन स्कोअर ${userStats.carbonScore} किलो आहे (कमी असणे चांगले). तुम्ही ${userStats.greenXP} ग्रीन एक्सपीसह पातळी ${userStats.level} वर आहात. तुम्ही आतापर्यंत यशस्वीरित्या ${userStats.co2SavedKg.toFixed(1)} किलो CO₂ आणि $${userStats.moneySaved.toFixed(2)} वाचवले आहेत! असेच पुढे चालू ठेवा!`,
-        `Tu puntuación de carbono actual es de ${userStats.carbonScore} kg (menor es mejor). Estás en el nivel ${userStats.level} con ${userStats.greenXP} Green XP. ¡Has ahorrado un total de ${userStats.co2SavedKg.toFixed(1)} kg de CO₂ y $${userStats.moneySaved.toFixed(2)} hasta ahora!`,
-        `Votre score carbone actuel est de ${userStats.carbonScore} kg (le plus bas est le mieux). Vous êtes au niveau ${userStats.level} avec ${userStats.greenXP} Green XP. Vous avez économisé un total de ${userStats.co2SavedKg.toFixed(1)} kg de CO₂ et $${userStats.moneySaved.toFixed(2)} jusqu'à présent !`
+        `Here is your live carbon analysis:
+- Carbon Score: ${userStats.carbonScore} kg CO₂ (lower is better)
+- Green XP: ${userStats.greenXP} (Level ${userStats.level})
+- CO₂ Saved: ${userStats.co2SavedKg.toFixed(1)} kg
+- Money Saved: $${userStats.moneySaved.toFixed(2)}
+
+Category Ratios out of ${totalLogs} total logged activities:
+- 🚗 Transport: ${transportCount} logs (${transportPct}%), Net: ${transportNet} kg CO₂
+- ⚡ Energy: ${energyCount} logs (${energyPct}%), Net: ${energyNet} kg CO₂
+- 🍔 Food: ${foodCount} logs (${foodPct}%), Net: ${foodNet} kg CO₂
+- 💧 Water: ${waterCount} logs (${waterPct}%), Net: ${waterNet} kg CO₂
+- ♻️ Waste: ${wasteCount} logs (${wastePct}%), Net: ${wasteNet} kg CO₂
+
+Your health score is ${userStats.healthyLivingScore}/100. Keep up the green choices!`,
+        `यहाँ आपका लाइव कार्बन विश्लेषण है:
+- कार्बन स्कोर: ${userStats.carbonScore} किलोग्राम (जितना कम हो उतना अच्छा है)
+- ग्रीन एक्सपी: ${userStats.greenXP} (लेवल ${userStats.level})
+- कुल बचाया गया: ${userStats.co2SavedKg.toFixed(1)} किलोग्राम CO₂
+- कुल बचाए गए पैसे: $${userStats.moneySaved.toFixed(2)}
+
+आपके ${totalLogs} कुल लॉग की गई गतिविधियों में से श्रेणी अनुपात:
+- 🚗 परिवहन: ${transportCount} लॉग (${transportPct}%), नेट: ${transportNet} किलो CO₂
+- ⚡ ऊर्जा: ${energyCount} लॉग (${energyPct}%), नेट: ${energyNet} किलो CO₂
+- 🍔 भोजन: ${foodCount} लॉग (${foodPct}%), नेट: ${foodNet} किलो CO₂
+- 💧 पानी: ${waterCount} लॉग (${waterPct}%), नेट: ${waterNet} किलो CO₂
+- ♻️ कचरा: ${wasteCount} लॉग (${wastePct}%), नेट: ${wasteNet} किलो CO₂
+
+आपका स्वास्थ्य स्कोर ${userStats.healthyLivingScore}/100 है। अच्छे विकल्प चुनते रहें!`,
+        `तुमचे लाइव्ह carbon विश्लेषण येथे आहे:
+- कार्बन स्कोअर: ${userStats.carbonScore} किलो (कमी असणे चांगले)
+- ग्रीन XP: ${userStats.greenXP} (पातळी ${userStats.level})
+- एकूण बचत: ${userStats.co2SavedKg.toFixed(1)} किलो CO₂
+- एकूण पैशांची बचत: $${userStats.moneySaved.toFixed(2)}
+
+एकूण ${totalLogs} नोंदणीकृत उपक्रमांमधील प्रमाण:
+- 🚗 वाहतूक: ${transportCount} नोंदी (${transportPct}%), नेट: ${transportNet} किलो CO₂
+- ⚡ ऊर्जा: ${energyCount} नोंदी (${energyPct}%), नेट: ${energyNet} किलो CO₂
+- 🍔 अन्न: ${foodCount} नोंदी (${foodPct}%), Net: ${foodNet} किलो CO₂
+- 💧 पाणी: ${waterCount} नोंदी (${waterPct}%), नेट: ${waterNet} किलो CO₂
+- ♻️ कचरा: ${wasteCount} नोंदी (${wastePct}%), नेट: ${wasteNet} किलो CO₂
+
+तुमचा आरोग्य स्कोअर ${userStats.healthyLivingScore}/100 आहे. हिरवे पर्याय निवडत राहा!`,
+        `Aquí está tu análisis de carbono en vivo:
+- Puntuación de Carbono: ${userStats.carbonScore} kg CO₂ (menor es mejor)
+- Green XP: ${userStats.greenXP} (Nivel ${userStats.level})
+- CO₂ Ahorrado: ${userStats.co2SavedKg.toFixed(1)} kg
+- Dinero Ahorrado: $${userStats.moneySaved.toFixed(2)}
+
+Distribución de tus ${totalLogs} actividades:
+- 🚗 Transporte: ${transportCount} logs (${transportPct}%), Neto: ${transportNet} kg CO₂
+- ⚡ Energía: ${energyCount} logs (${energyPct}%), Neto: ${energyNet} kg CO₂
+- 🍔 Comida: ${foodCount} logs (${foodPct}%), Neto: ${foodNet} kg CO₂
+- 💧 Agua: ${waterCount} logs (${waterPct}%), Neto: ${waterNet} kg CO₂
+- ♻️ Residuos: ${wasteCount} logs (${wastePct}%), Neto: ${wasteNet} kg CO₂
+
+¡Tu puntuación de salud es ${userStats.healthyLivingScore}/100!`,
+        `Voici votre analyse de carbone en temps réel :
+- Score Carbone : ${userStats.carbonScore} kg CO₂ (le plus bas est le mieux)
+- Green XP : ${userStats.greenXP} (Niveau ${userStats.level})
+- CO₂ Économisé : ${userStats.co2SavedKg.toFixed(1)} kg
+- Argent Économisé : $${userStats.moneySaved.toFixed(2)}
+
+Répartition de vos ${totalLogs} activités :
+- 🚗 Transport : ${transportCount} logs (${transportPct}%), Net : ${transportNet} kg CO₂
+- ⚡ Énergie : ${energyCount} logs (${energyPct}%), Net : ${energyNet} kg CO₂
+- 🍔 Nourriture : ${foodCount} logs (${foodPct}%), Net : ${foodNet} kg CO₂
+- 💧 Eau : ${waterCount} logs (${waterPct}%), Net : ${waterNet} kg CO₂
+- ♻️ Déchets : ${wasteCount} logs (${wastePct}%), Net : ${wasteNet} kg CO₂
+
+Votre score de vie saine est de ${userStats.healthyLivingScore}/100 !`
       );
     }
 
     if (matches(transportKeywords)) {
       return respond(
-        `Transport is a primary contributor to personal carbon footprint. Since you are located in ${userProfile?.city || 'your city'}, try:
+        `Transport makes up ${transportPct}% of your logged activities (${transportCount} logs) with a net impact of ${transportNet} kg CO₂. Since you are in ${userProfile?.city || 'your city'}, try:
 1. Walk or Cycle for short trips (earns +20 XP).
 2. Use public transit or carpool whenever possible.
 3. Switch to an Electric Vehicle (EV) which can reduce your personal transit footprint by ~80% compared to fossil fuel vehicles.`,
-        `परिवहन आपके व्यक्तिगत कार्बन फुटप्रिंट का एक मुख्य कारण है। चूंकि आप ${userProfile?.city || 'अपने शहर'} में हैं, कोशिश करें:
+        `परिवहन आपकी ${transportPct}% गतिविधियों (${transportCount} लॉग) का हिस्सा है, जिसका नेट प्रभाव ${transportNet} किलो CO₂ है। चूंकि आप ${userProfile?.city || 'अपने शहर'} में हैं, कोशिश करें:
 1. छोटी यात्राओं के लिए पैदल चलें या साइकिल का उपयोग करें (आपको +20 XP मिलेंगे)।
 2. जब भी संभव हो सार्वजनिक परिवहन या कारपूल का उपयोग करें।
 3. इलेक्ट्रिक वाहन (EV) अपनाने पर विचार करें, जो जीवाश्म ईंधन वाहनों की तुलना में आपके फुटप्रिंट को ~80% तक कम कर सकता है।`,
-        `वाहतूक हा वैयक्तिक कार्बन फूटप्रिंटमध्ये प्रमुख वाटा आहे. तुम्ही ${userProfile?.city || 'तुमच्या शहरात'} असल्यामुळे, प्रयत्न करा:
+        `वाहतूक तुमच्या ${transportPct}% उपक्रमांचा (${transportCount} नोंदी) भाग आहे, ज्याचा निव्वळ प्रभाव ${transportNet} किलो CO₂ आहे. तुम्ही ${userProfile?.city || 'तुमच्या शहरात'} असल्यामुळे, प्रयत्न करा:
 1. लहान प्रवासासाठी चाला किंवा सायकल चालवा (+20 XP मिळतात).
 2. शक्य असेल तेव्हा सार्वजनिक वाहतूक किंवा कारपूल वापरा.
-3. इलेक्ट्रिक व्हेईकल (EV) वर स्विच करा जे जीवाश्म इंधन वाहनांच्या तुलनेत तुमच्या ट्रान्झिट फूटप्रिंटला ~८०% कमी करू शकते.`,
-        `El transporte es un contribuyente principal de la huella de carbono. Dado que estás en ${userProfile?.city || 'tu ciudad'}, intenta:
+3. इलेक्ट्रिक व्हेईकल (EV) वर स्विच करा जे जीवाश्म इंधन वाहनांच्या तुलनेत तुमच्या फूटप्रिंटला ~८०% कमी करू शकते।`,
+        `El transporte representa el ${transportPct}% de tus actividades (${transportCount} logs) con un impacto neto de ${transportNet} kg CO₂. Dado que estás en ${userProfile?.city || 'tu ciudad'}, intenta:
 1. Caminar o ir en bicicleta para distancias cortas (gana +20 XP).
 2. Usar transporte público o compartir vehículo.
 3. Cambiar a un vehículo eléctrico (EV), que reduce tus emisiones en un 80%.`,
-        `Le transport est un contributeur majeur de l'empreinte carbone. Puisque vous êtes à ${userProfile?.city || 'votre ville'}, essayez :
+        `Le transport représente ${transportPct}% de vos activités ({transportCount} logs) avec un impact net de ${transportNet} kg CO₂. Puisque vous êtes à ${userProfile?.city || 'votre ville'}, essayez :
 1. Marchez ou faites du vélo pour les courts trajets (gagnez +20 XP).
 2. Utilisez les transports en commun ou le covoiturage.
 3. Passer à un véhicule électrique (EV), ce qui peut réduire votre empreinte transport de 80 %.`
@@ -211,23 +317,23 @@ export const AIChat: React.FC = () => {
 
     if (matches(energyKeywords)) {
       return respond(
-        `To optimize your energy footprint:
+        `Energy/Electricity makes up ${energyPct}% of your logged activities (${energyCount} logs) with a net impact of ${energyNet} kg CO₂. To optimize:
 1. Unplug devices that are in standby mode (phantom load).
 2. Consider installing Solar Panels, which can reduce your carbon footprint by up to 3000 kg of CO₂ per year.
 3. Switch to LED lighting and energy-efficient appliances.`,
-        `अपने ऊर्जा फुटप्रिंट को अनुकूलित करने के लिए:
+        `ऊर्जा/बिजली आपकी ${energyPct}% गतिविधियों (${energyCount} लॉग) का हिस्सा है, जिसका नेट प्रभाव ${energyNet} किलो CO₂ है। सुधार के लिए:
 1. स्टैंडबाय मोड वाले उपकरणों को अनप्लग करें।
 2. सोलर पैनल लगाने पर विचार करें, जो प्रति वर्ष आपके फुटप्रिंट को 3000 किलोग्राम CO₂ तक कम कर सकता है।
 3. एलईडी लाइट्स और ऊर्जा-कुशल उपकरणों का उपयोग करें।`,
-        `तुमचा ऊर्जा फूटप्रिंट सुव्यवस्थित करण्यासाठी:
+        `ऊर्जा/वीज तुमच्या ${energyPct}% उपक्रमांचा (${energyCount} नोंदी) भाग आहे, निव्वळ प्रभाव ${energyNet} किलो CO₂ आहे. सुधारण्यासाठी:
 1. स्टँडबाय मोडमध्ये असलेली उपकरणे अनप्लग करा.
 2. सोलर पॅनेल बसवण्याचा विचार करा, जे तुमचे कार्बन फूटप्रिंट वर्षाला 3000 किलो CO₂ पर्यंत कमी करू शकतात.
-3. एलईडी दिवे आणि ऊर्जा-कार्यक्षम उपकरणांवर स्विच करा.`,
-        `Para optimizar tu consumo de energía:
+3. एलईडी दिवे आणि ऊर्जा-कार्यक्षम उपकरणांवर स्विच करा।`,
+        `La energía representa el ${energyPct}% de tus actividades (${energyCount} logs) con un impacto neto de ${energyNet} kg CO₂. Para optimizar:
 1. Desconecta los aparatos en modo de espera.
 2. Considera instalar paneles solares para reducir tu huella en unos 3000 kg de CO₂ al año.
 3. Cambia a luces LED.`,
-        `Pour optimiser votre empreinte énergétique :
+        `L'énergie représente ${energyPct}% de vos activités (${energyCount} logs) avec un impact net de ${energyNet} kg CO₂. Pour optimiser :
 1. Débranchez les appareils en mode veille.
 2. Envisagez d'installer des panneaux solaires pour réduire votre empreinte jusqu'à 3000 kg de CO₂ par an.
 3. Utilisez des éclairages LED.`
@@ -236,24 +342,24 @@ export const AIChat: React.FC = () => {
 
     if (matches(foodKeywords)) {
       return respond(
-        `Dietary habits have a massive environmental footprint:
+        `Food/Diet makes up ${foodPct}% of your logged activities (${foodCount} logs) with a net impact of ${foodNet} kg CO₂. Tips:
 1. Adopting a vegetarian or vegan diet significantly reduces greenhouse gases (cuts ~1500 kg CO₂ per year if consistent).
 2. Avoid food waste by shopping with a list and utilizing leftovers.
 3. Buy local, seasonal products to reduce food miles.`,
-        `खान-पान की आदतों का पर्यावरण पर भारी प्रभाव पड़ता है:
+        `भोजन/आहार आपकी ${foodPct}% गतिविधियों (${foodCount} लॉग) का हिस्सा है, जिसका नेट प्रभाव ${foodNet} किलो CO₂ है। सुझाव:
 1. शाकाहारी या वीगन आहार अपनाने से ग्रीनहाउस गैसें बहुत कम होती हैं (साल में ~1500 किलोग्राम CO₂ की बचत)।
 2. खरीदारी की सूची बनाकर भोजन की बर्बादी से बचें।
 3. फूड माइल्स को कम करने के लिए स्थानीय और मौसमी खाद्य पदार्थ खरीदें।`,
-        `खाण्याच्या सवयींचा पर्यावरणावर प्रचंड प्रभाव पडतो:
+        `अन्न/आहार तुमच्या ${foodPct}% उपक्रमांचा (${foodCount} नोंदी) भाग आहे, निव्वळ प्रभाव ${foodNet} किलो CO₂ आहे. टिप्स:
 1. शाकाहारी किंवा शाकाहारी आहार स्वीकारल्याने हरितगृह वायू लक्षणीयरीत्या कमी होतात (नियमित असल्यास वर्षाला ~१५०० किलो CO₂ ची बचत होते).
 2. खरेदी सूचीसह खरेदी करून अन्नाचा अपव्यय टाळा.
-3. फूड माइल्स कमी करण्यासाठी स्थानिक, हंगामी उत्पादने खरेदी करा.`,
-        `Los hábitos alimenticios tienen una huella ambiental masiva:
+3. फूड माइल्स कमी करण्यासाठी स्थानिक, हंगामी उत्पादने खरेदी करा।`,
+        `La comida representa el ${foodPct}% de tus actividades (${foodCount} logs) con un impacto neto de ${foodNet} kg CO₂. Consejos:
 1. Adoptar una dieta vegetariana o vegana reduce significativamente los gases (ahorra ~1500 kg de CO₂ al año).
 2. Evita el desperdicio planificando las compras.
 3. Elige productos locales y de temporada.`,
-        `L'alimentation a une empreinte environnementale massive :
-1. Adoptar un régime végétarien ou végétalien réduit considérablement les gaz (environ 1500 kg de CO₂ en moins par an).
+        `L'alimentation représente ${foodPct}% de vos activités (${foodCount} logs) avec un impact net de ${foodNet} kg CO₂. Conseils :
+1. Adopter un régime végétarien ou végétalien réduit considérablement les gaz (environ 1500 kg de CO₂ en moins par an).
 2. Évitez le gaspillage en planifiant vos courses.
 3. Privilégiez les produits locaux et de saison.`
       );
@@ -262,23 +368,23 @@ export const AIChat: React.FC = () => {
     if (matches(reduceKeywords)) {
       return respond(
         `Here are the best ways to reduce your carbon footprint today:
-1. Use the "Tracker & Scanner" tab to log walking/cycling or healthy habits.
+1. Use the "Daily Log" tab to log walking/cycling or healthy habits.
 2. Check the "What If Simulator" to preview the impact of future actions (like switching to EV or installing solar).
 3. Try to complete your AI Daily Missions shown on the dashboard for bonus Green XP!`,
-        `आज अपने कार्बन फुटप्रिंट को कम करने के बेहतरीन तरीके:
-1. "Tracker & Scanner" टैब का उपयोग करके पैदल चलने/साइकिल चलाने या अन्य आदतों को दर्ज करें।
+        `आज अपने carbon footprint को कम करने के बेहतरीन तरीके:
+1. "Daily Log" टैब का उपयोग करके पैदल चलने/साइकिल चलाने या अन्य आदतों को दर्ज करें।
 2. भविष्य के बदलावों (जैसे ईवी पर स्विच करना या सोलर लगाना) के प्रभाव को देखने के लिए "What If Simulator" देखें।
 3. अतिरिक्त ग्रीन एक्सपी बोनस के लिए डैशबोर्ड पर दिए गए एआई दैनिक मिशनों को पूरा करने का प्रयास करें!`,
         `तुमचे कार्बन फूटप्रिंट आजच कमी करण्याचे उत्तम मार्ग येथे आहेत:
-1. चालणे/सायकल चालवणे किंवा इतर सवयी नोंदवण्यासाठी "Tracker & Scanner" टॅब वापरा.
+1. चालणे/सायकल चालवणे किंवा इतर सवयी नोंदवण्यासाठी "Daily Log" टॅब वापरा.
 2. भविष्यातील कृतींचे परिणाम तपासण्यासाठी "What If Simulator" तपासा (उदा. ईव्ही किंवा सोलर पॅनेल लावणे).
 3. बोनस ग्रीन एक्सपी मिळवण्यासाठी तुमच्या डॅशबोर्डवर दिसणारी एआय दैनिक मिशन पूर्ण करण्याचा प्रयत्न करा!`,
         `Aquí tienes las mejores maneras de reducir tu huella hoy:
-1. Usa la pestaña "Tracker & Scanner" para registrar tus actividades.
+1. Usa la pestaña "Daily Log" para registrar tus actividades.
 2. Consulta el "What If Simulator" para predecir el impacto de futuros cambios.
 3. ¡Completa las misiones diarias en tu panel para ganar Green XP!`,
         `Voici les meilleures façons de réduire votre empreinte aujourd'hui :
-1. Utilisez l'onglet "Tracker & Scanner" pour enregistrer vos activités.
+1. Utilisez l'onglet "Daily Log" pour enregistrer vos activités.
 2. Consultez le "What If Simulator" pour prévoir l'impact de vos choix futurs.
 3. Remplissez les missions quotidiennes pour remporter des Green XP !`
       );
@@ -312,7 +418,7 @@ export const AIChat: React.FC = () => {
               <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-eco-100 dark:bg-emerald-950/50 text-eco-600 dark:text-emerald-400' : 'bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400'}`}>
                 {msg.role === 'user' ? <User size={20} /> : <Bot size={20} />}
               </div>
-              <div className={`p-4 rounded-2xl max-w-[80%] ${msg.role === 'user' ? 'bg-eco-600 dark:bg-emerald-600 text-white rounded-tr-none' : 'bg-gray-100 dark:bg-gray-850 text-gray-800 dark:text-gray-200 rounded-tl-none'}`}>
+              <div className={`p-4 rounded-2xl max-w-[80%] ${msg.role === 'user' ? 'bg-eco-600 dark:bg-emerald-600 text-white rounded-tr-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none'}`}>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.text}</p>
               </div>
             </div>
@@ -322,7 +428,7 @@ export const AIChat: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <Bot size={20} />
               </div>
-              <div className="p-4 rounded-2xl bg-gray-100 dark:bg-gray-850 text-gray-800 dark:text-gray-200 rounded-tl-none flex items-center gap-2">
+              <div className="p-4 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-tl-none flex items-center gap-2">
                 <Loader2 size={16} className="animate-spin text-blue-600 dark:text-blue-400" /> {t('thinking')}
               </div>
             </div>
